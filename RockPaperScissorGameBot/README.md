@@ -1,4 +1,4 @@
-﻿# EchoBot
+﻿# RockPaperScissorGameBot
 
 Bot Framework v4 echo bot sample.
 
@@ -15,11 +15,11 @@ This bot has been created using [Bot Framework](https://dev.botframework.com), i
 
 ## To try this sample
 
-- In a terminal, navigate to `EchoBot`
+- In a terminal, navigate to `RockPaperScissorGameBot`
 
     ```bash
     # change into project folder
-    cd # EchoBot
+    cd # RockPaperScissorGameBot
     ```
 
 - Run the bot from a terminal or from Visual Studio, choose option A or B.
@@ -35,8 +35,8 @@ This bot has been created using [Bot Framework](https://dev.botframework.com), i
 
   - Launch Visual Studio
   - File -> Open -> Project/Solution
-  - Navigate to `EchoBot` folder
-  - Select `EchoBot.csproj` file
+  - Navigate to `RockPaperScissorGameBot` folder
+  - Select `RockPaperScissorGameBot.csproj` file
   - Press `F5` to run the project
 
 ## Testing the bot using Bot Framework Emulator
