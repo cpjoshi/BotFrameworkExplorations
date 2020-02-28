@@ -1,0 +1,18 @@
+{
+    "name": "EchoBotNew",
+    "description": "",
+    "services": [
+      {
+        "type": "endpoint",
+        "appId": "6d3aaddc-4fc9-45fc-b5ab-05b62f60a530",
+        "appPassword": "?/8:-O1nntn0DLvZ6iyG:7KPzz]JfN62",
+        "endpoint": "http://localhost:3978/api/messages",
+        "id": "41771810-4d5e-11ea-bb55-6b811640aa13",
+        "name": "ngrok_url"
+      }
+    ],
+    "padlock": "",
+    "version": "2.0",
+    "overrides": null,
+    "path": "C:\\Users\\chjos\\gitrepos\\EchoBot\\EchoBot\\EchoBotNew.bot"
+}

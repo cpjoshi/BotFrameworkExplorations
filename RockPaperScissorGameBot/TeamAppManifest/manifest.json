@@ -1,0 +1,80 @@
+{
+    "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+    "manifestVersion": "1.5",
+    "version": "1.0.0",
+    "id": "6d3aaddc-4fc9-45fc-b5ab-05b62f60a530",
+    "packageName": "EchoBot.Bots",
+    "developer": {
+        "name": "CPJoshi",
+        "websiteUrl": "https://www.cpjoshi.com",
+        "privacyUrl": "https://www.cpjoshi.com/privacy",
+        "termsOfUseUrl": "https://www.cpjoshi.com/termsofuse"
+    },
+    "icons": {
+        "color": "color.png",
+        "outline": "outline.png"
+    },
+    "name": {
+        "short": "EchoBotJoshi",
+        "full": "PaperScissorGame"
+    },
+    "description": {
+        "short": "It plays game",
+        "full": "It plays paper scissor game"
+    },
+    "accentColor": "#FFFFFF",
+    "bots": [
+        {
+            "botId": "6d3aaddc-4fc9-45fc-b5ab-05b62f60a530",
+            "scopes": [
+                "personal",
+                "team",
+                "groupchat"
+            ],
+            "commandLists": [
+                {
+                    "scopes": [
+                        "personal"
+                    ],
+                    "commands": [
+                        {
+                            "title": "start",
+                            "description": "start the game"
+                        }
+                    ]
+                },
+                {
+                    "scopes": [
+                        "team"
+                    ],
+                    "commands": [
+                        {
+                            "title": "start",
+                            "description": "start the game"
+                        }
+                    ]
+                },
+                {
+                    "scopes": [
+                        "groupchat"
+                    ],
+                    "commands": [
+                        {
+                            "title": "start",
+                            "description": "start the game"
+                        }
+                    ]
+                }
+            ],
+            "supportsFiles": true,
+            "isNotificationOnly": true
+        }
+    ],
+    "permissions": [
+        "identity",
+        "messageTeamMembers"
+    ],
+    "validDomains": [
+        "4e4f9fd2.ngrok.io"
+    ]
+}
