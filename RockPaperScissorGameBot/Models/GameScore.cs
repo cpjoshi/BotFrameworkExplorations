@@ -9,8 +9,8 @@ namespace RockPaperScissorGameBot.Models
 {
     public class PlayerChoice
     {
-        public string PlayerName;
-        public string Choice;
+        public string PlayerName { get; set; }
+        public string Choice { get; set; }
     }
     public class GameScore
     {

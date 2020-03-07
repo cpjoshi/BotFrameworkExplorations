@@ -31,7 +31,7 @@ namespace RockPaperScissorGameBot.Controllers
         {
             // Delegate the processing of the HTTP POST to the adapter.
             // The adapter will invoke the bot.
-            await Adapter.ProcessAsync(Request, Response, Bot);
+            await Adapter.ProcessAsync(Request, Response, Bot).ConfigureAwait(false);
         }
     }
 }

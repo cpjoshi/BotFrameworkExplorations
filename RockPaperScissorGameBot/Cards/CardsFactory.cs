@@ -3,6 +3,7 @@ using Microsoft.Bot.Schema;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -79,7 +80,7 @@ namespace RockPaperScissorGameBot.Cards
             List<AdaptiveFact> facts = new List<AdaptiveFact>();
             foreach (var key in playerScores.Keys)
             {
-                facts.Add(new AdaptiveFact(key, playerScores[key].ToString()));
+                facts.Add(new AdaptiveFact(key, playerScores[key].ToString(CultureInfo.InvariantCulture)));
             }
 
             var card = new AdaptiveCard(new AdaptiveSchemaVersion(1, 2))

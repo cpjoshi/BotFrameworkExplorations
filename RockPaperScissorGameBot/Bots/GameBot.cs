@@ -10,160 +10,62 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using RockPaperScissorGameBot.Utils;
+using System.Globalization;
 
 namespace RockPaperScissorGameBot.Bots
 {
     public class GameBot: TeamsActivityHandler
     {
-        private string _appId;
-        private string _appPassword;
-        private GameScore _gameScore;
-        private UserConversationStateStore _userConversationStateStore;
-        private CardsFactory _cardsFactory;
+        private GameStarter _gameStarter;
+        private GameScoreTracker _gameScoreTracker;
 
-        public GameBot(IConfiguration config, 
-            GameScore gameScore, 
-            UserConversationStateStore userConversationStateStore,
-            CardsFactory cardsFactory)
+        public GameBot(GameStarter gameStarter, GameScoreTracker gameScoreTracker)
         {
-            _appId = config["MicrosoftAppId"];
-            _appPassword = config["MicrosoftAppPassword"];
-            _gameScore = gameScore;
-            _userConversationStateStore = userConversationStateStore;
-            _cardsFactory = cardsFactory;
+            _gameStarter = gameStarter;
+            _gameScoreTracker = gameScoreTracker;
         }
 
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, 
             CancellationToken cancellationToken)
         {
             turnContext.Activity.RemoveRecipientMention();
-            var txt = turnContext.Activity.Text;
-
-            //response received from the adaptive card.
-            if (IsButtonClick(txt) && turnContext.Activity.Value != null)
-            {
-                var obj = (JObject)turnContext.Activity.Value;
-                
-                //record the choice
-                _gameScore.AddScore(new PlayerChoice()
-                {
-                    PlayerName = obj["user"].ToString(),
-                    Choice = obj["choice"].ToString()
-                });
-
-                //Update the Game card with Thank You Card
-                var card = _cardsFactory.CreateThankYouCardAttachment(obj["user"].ToString());
-                var thankYouForPlayingCard = MessageFactory.Attachment(card);
-                await UpdateMessageMemberAsync(turnContext, turnContext.Activity.From.Id, thankYouForPlayingCard, cancellationToken);
-                return;
-            }
-
             var commandName = turnContext.Activity.Text.Trim();
+            
+            //User wants to start a new game and check the score of last game
             switch (commandName)
             {
                 case "StartGame":
                     {
-                        var members = await TeamsInfo.GetMembersAsync(turnContext, cancellationToken);
-                        foreach(var member in members)
-                        {
-                            if (member.Id == turnContext.Activity.Recipient.Id)
-                            {
-                                continue;
-                            }
-
-                            string gameId = Guid.NewGuid().ToString();
-                            var gameCard = _cardsFactory.CreateGameCardAttachment(member.Name, gameId);
-                            var activity = MessageFactory.Attachment(gameCard);
-                            
-                            await MessageMembersAsync(turnContext, 
-                                member, 
-                                activity, 
-                                cancellationToken);
-                        }
-                        await turnContext.SendActivityAsync(MessageFactory.Text("Game invitation is sent to all members."), 
-                            cancellationToken);
+                        await _gameStarter.StartNewGame(turnContext, cancellationToken).ConfigureAwait(false);
+                        return;
                     }
-                    break;
 
                 case "ShowScore":
                     {
-                        await turnContext.SendActivityAsync(MessageFactory.Attachment(
-                            _cardsFactory.CreateScoreCardAttachment(_gameScore.GetPlayerScores())));
+                        await _gameScoreTracker.PostGameScoreInChannel(turnContext, cancellationToken).ConfigureAwait(false);
+                        return;
                     }
-                    break;
-
-                default:
-                    await turnContext.SendActivityAsync($"Well {turnContext.Activity.From.Name}, I don't understand {commandName}");
-                    break;
             }
-        }
 
-        private bool IsButtonClick(string str)
-        {
-            if (string.IsNullOrEmpty(str))
-                return false;
-            str = str.ToLower();
-            return (str == "rock" || str == "paper" || str == "scissor");
-        }
-
-        private async Task MessageMembersAsync (ITurnContext turnContext,
-            TeamsChannelAccount teamMember,
-            IMessageActivity messageActivity, 
-            CancellationToken cancellationToken)
-        {
-            var teamsChannelId = turnContext.Activity.TeamsGetChannelId();
-            var serviceUrl = turnContext.Activity.ServiceUrl;
-            var credentials = new MicrosoftAppCredentials(_appId, _appPassword);
-            ConversationReference conversationReference = null;
-            string activityId = string.Empty;
-
-            var conversationParameters = new ConversationParameters
+            //User clicked on rock/paper/scissor
+            if (PlayerSubmittedChoice(commandName))
             {
-                IsGroup = false,
-                Bot = turnContext.Activity.Recipient,
-                Members = new ChannelAccount[] { teamMember },
-                TenantId = turnContext.Activity.Conversation.TenantId,
-            };
+                //async call
+                _ = _gameScoreTracker.UpdatePlayerScore(turnContext, cancellationToken);
+                return;
+            }
 
-            await ((BotFrameworkAdapter) turnContext.Adapter).CreateConversationAsync(
-                teamsChannelId,
-                serviceUrl,
-                credentials,
-                conversationParameters,
-                callback: async (turnContext1, cancellationToken1) =>
-                {
-                    conversationReference = turnContext1.Activity.GetConversationReference();
 
-                    await ((BotFrameworkAdapter) turnContext.Adapter).ContinueConversationAsync(
-                        _appId,
-                        conversationReference,
-                        async (t2, c2) =>
-                        {
-                            var response = await t2.SendActivityAsync(messageActivity, c2);
-                            activityId = response.Id;
-                            _userConversationStateStore.SaveConversationReference(teamMember, conversationReference, activityId);
-                        },
-                        cancellationToken);
-
-                },
-                cancellationToken);
+            //Unknown Command
+            await turnContext.SendActivityAsync($"Well {turnContext.Activity.From.Name}, I don't understand {commandName}. " +
+                $"I understand: StartGame, ShowScore").ConfigureAwait(false);
         }
 
-        private async Task UpdateMessageMemberAsync(ITurnContext turnContext,
-            string teamMemberId,
-            IMessageActivity messageActivity,
-            CancellationToken cancellationToken)
+        private bool PlayerSubmittedChoice(string str)
         {
-            var userConversationState = _userConversationStateStore.GetConversationReference(teamMemberId);
-            await ((BotFrameworkAdapter)turnContext.Adapter).ContinueConversationAsync(
-                _appId,
-                userConversationState.Conversation,
-                async (t2, c2) =>
-                {
-                    messageActivity.Id = userConversationState.ActivityId;
-                    await t2.UpdateActivityAsync(messageActivity, c2);
-                },
-                cancellationToken);
+            str = str?.ToUpperInvariant();
+            return (str == "ROCK" || str == "PAPER" || str == "SCISSOR");
         }
     }
 }
