@@ -98,10 +98,10 @@ namespace RockPaperScissorGameBot.Utils
                             activityId = response.Id;
                             _userConversationStateStore.SaveConversationReference(teamMember, conversationReference, activityId);
                         },
-                        cancellationToken).ConfigureAwait(false);
+                        cancellationToken).ConfigureAwait(true);
 
                 },
-                cancellationToken).ConfigureAwait(false);
+                cancellationToken).ConfigureAwait(true);
         }
 
     }

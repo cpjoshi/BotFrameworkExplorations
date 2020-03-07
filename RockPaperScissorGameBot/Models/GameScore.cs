@@ -16,10 +16,13 @@ namespace RockPaperScissorGameBot.Models
     {
         private Dictionary<string, int> dict = new Dictionary<string, int>();
         private List<PlayerChoice> playerScores = new List<PlayerChoice>();
+        public void AddPlayer(string playerName)
+        {
+            dict[playerName] = 0;
+        }
         public void AddScore(PlayerChoice playerChoice)
         {
             playerScores.Add(playerChoice);
-            dict[playerChoice.PlayerName] = 0;
         }
 
         private PlayerChoice Whowon(PlayerChoice one, PlayerChoice two)

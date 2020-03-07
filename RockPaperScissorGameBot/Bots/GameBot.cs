@@ -30,7 +30,7 @@ namespace RockPaperScissorGameBot.Bots
             CancellationToken cancellationToken)
         {
             turnContext.Activity.RemoveRecipientMention();
-            var commandName = turnContext.Activity.Text.Trim();
+            var commandName = turnContext.Activity.Text?.Trim();
             
             //User wants to start a new game and check the score of last game
             switch (commandName)

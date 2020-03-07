@@ -45,11 +45,16 @@ namespace RockPaperScissorGameBot.Utils
             });
 
             //Update the Game card with Thank You Card
+            await SendThankyouForPlayingCard(turnContext, obj, cancellationToken).ConfigureAwait(false);
+
+        }
+
+        private async Task SendThankyouForPlayingCard(ITurnContext<IMessageActivity> turnContext, JObject obj, CancellationToken cancellationToken)
+        {
             var card = _cardsFactory.CreateThankYouCardAttachment(obj["user"].ToString());
             var thankYouForPlayingCard = MessageFactory.Attachment(card);
             await UpdateMessageMemberAsync(turnContext, turnContext.Activity.From.Id, thankYouForPlayingCard, cancellationToken)
                 .ConfigureAwait(false);
-
         }
 
         public async Task PostGameScoreInChannel(ITurnContext<IMessageActivity> turnContext,

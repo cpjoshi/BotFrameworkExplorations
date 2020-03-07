@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RockPaperScissorGameBot.Bots;
 using RockPaperScissorGameBot.Models;
 using RockPaperScissorGameBot.Cards;
+using RockPaperScissorGameBot.Utils;
 
 namespace RockPaperScissorGameBot
 {
@@ -45,6 +46,8 @@ namespace RockPaperScissorGameBot
             services.AddSingleton<GameScore>();
             services.AddSingleton<UserConversationStateStore>();
             services.AddSingleton<CardsFactory>();
+            services.AddSingleton<GameScoreTracker>();
+            services.AddSingleton<GameStarter>();
             services.AddTransient<IBot, GameBot>();
 
         }
