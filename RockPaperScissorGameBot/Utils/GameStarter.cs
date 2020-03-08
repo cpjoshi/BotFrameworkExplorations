@@ -20,12 +20,12 @@ namespace RockPaperScissorGameBot.Utils
         private string _appId;
         private string _appPassword;
         private GameScore _gameScore;
-        private UserConversationStateStore _userConversationStateStore;
+        private UserConversationStateCollection _userConversationStateStore;
         private CardsFactory _cardsFactory;
 
         public GameStarter(IConfiguration config,
             GameScore gameScore,
-            UserConversationStateStore userConversationStateStore,
+            UserConversationStateCollection userConversationStateStore,
             CardsFactory cardsFactory)
         {
             _appId = config["MicrosoftAppId"];
@@ -39,6 +39,9 @@ namespace RockPaperScissorGameBot.Utils
         public async Task StartNewGame(ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
         {
+            string gameId = Guid.NewGuid().ToString();
+            _gameScore.AddNewGame(gameId);
+
             var members = await TeamsInfo.GetMembersAsync(turnContext, cancellationToken).ConfigureAwait(false);
             foreach (var member in members)
             {
@@ -47,7 +50,7 @@ namespace RockPaperScissorGameBot.Utils
                     continue;
                 }
 
-                string gameId = Guid.NewGuid().ToString();
+                _gameScore.AddNewPlayer(gameId, member.Name);
                 var gameCard = _cardsFactory.CreateGameCardAttachment(member.Name, gameId);
                 var activity = MessageFactory.Attachment(gameCard);
 
@@ -94,9 +97,9 @@ namespace RockPaperScissorGameBot.Utils
                         conversationReference,
                         async (t2, c2) =>
                         {
-                            var response = await t2.SendActivityAsync(messageActivity, c2).ConfigureAwait(false);
+                            var response = await t2.SendActivityAsync(messageActivity, c2).ConfigureAwait(true);
                             activityId = response.Id;
-                            _userConversationStateStore.SaveConversationReference(teamMember, conversationReference, activityId);
+                            _userConversationStateStore.AddConversationReference(teamMember, conversationReference, activityId);
                         },
                         cancellationToken).ConfigureAwait(true);
 

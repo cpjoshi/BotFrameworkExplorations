@@ -44,7 +44,7 @@ namespace RockPaperScissorGameBot
             services.AddSingleton<ConversationState>();
 
             services.AddSingleton<GameScore>();
-            services.AddSingleton<UserConversationStateStore>();
+            services.AddSingleton<UserConversationStateCollection>();
             services.AddSingleton<CardsFactory>();
             services.AddSingleton<GameScoreTracker>();
             services.AddSingleton<GameStarter>();

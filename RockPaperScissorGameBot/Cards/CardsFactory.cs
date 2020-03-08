@@ -16,7 +16,7 @@ namespace RockPaperScissorGameBot.Cards
             var card = new HeroCard
             {
                 Title = "Rock, Paper, Scissor Game",
-                Text = $"Thank You {memberName} for playing. Your Score will be posted in Channel."
+                Text = $"Thank You {memberName} for playing. We will send you the scorecard when the game is over."
             };
             return card.ToAttachment();
         }

@@ -32,18 +32,12 @@ namespace RockPaperScissorGameBot.Bots
             turnContext.Activity.RemoveRecipientMention();
             var commandName = turnContext.Activity.Text?.Trim();
             
-            //User wants to start a new game and check the score of last game
+            //User wants to start a new game
             switch (commandName)
             {
                 case "StartGame":
                     {
                         await _gameStarter.StartNewGame(turnContext, cancellationToken).ConfigureAwait(false);
-                        return;
-                    }
-
-                case "ShowScore":
-                    {
-                        await _gameScoreTracker.PostGameScoreInChannel(turnContext, cancellationToken).ConfigureAwait(false);
                         return;
                     }
             }
@@ -59,7 +53,7 @@ namespace RockPaperScissorGameBot.Bots
 
             //Unknown Command
             await turnContext.SendActivityAsync($"Well {turnContext.Activity.From.Name}, I don't understand {commandName}. " +
-                $"I understand: StartGame, ShowScore").ConfigureAwait(false);
+                $"I understand: StartGame").ConfigureAwait(false);
         }
 
         private bool PlayerSubmittedChoice(string str)

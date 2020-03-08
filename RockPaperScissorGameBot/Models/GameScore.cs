@@ -14,26 +14,77 @@ namespace RockPaperScissorGameBot.Models
     }
     public class GameScore
     {
-        private Dictionary<string, int> dict = new Dictionary<string, int>();
-        private List<PlayerChoice> playerScores = new List<PlayerChoice>();
-        public void AddPlayer(string playerName)
+        private Dictionary<string, Dictionary<string, PlayerChoice>> _games = new Dictionary<string, Dictionary<string, PlayerChoice>>();
+        public void AddNewGame(string gameId)
         {
-            dict[playerName] = 0;
+            //add a new Game
+            if(!_games.ContainsKey(gameId))
+            {
+                _games.Add(gameId, new Dictionary<string, PlayerChoice>());
+            }
         }
-        public void AddScore(PlayerChoice playerChoice)
+
+        public void AddNewPlayer(string gameId, string playerName)
         {
-            playerScores.Add(playerChoice);
+            _games[gameId].Add(playerName, null);
+        }
+        public void RecordPlayersChoice(string gameId, PlayerChoice playerChoice)
+        {
+            if (!_games[gameId].ContainsKey(playerChoice.PlayerName))
+                return;
+
+            //this player has already recorded his choice, don't record it again
+            if (_games[gameId][playerChoice.PlayerName] != null)
+                return;
+
+            _games[gameId][playerChoice.PlayerName] = playerChoice;
+        }
+
+        public bool isGameOver(string gameId)
+        {
+            foreach(var player in _games[gameId].Keys)
+            {
+                //Some player has not recorded his choice yet, game not over yet
+                if (_games[gameId][player] == null)
+                    return false;
+            }
+            return true;
+        }
+        public Dictionary<string, int> GetAllPlayerScores(string gameId)
+        {
+            var gameScoreForAllPlayers = new Dictionary<string, int>();
+            PlayerChoice[] arr = _games[gameId].Values.ToArray();
+
+            //initialize all player scores with 0
+            for (int i = 0; i < arr.Length; i++)
+            {
+                gameScoreForAllPlayers.Add(arr[i].PlayerName, 0);
+            }
+
+            for (int i=0; i<arr.Length; i++)
+            {
+                for(int j=i+1; j<arr.Length; j++)
+                {
+                    PlayerChoice tmp = Whowon(arr[i], arr[j]);
+                    if(tmp == null)
+                    {
+                        continue;
+                    }
+                    gameScoreForAllPlayers[tmp.PlayerName]++;
+                }
+            }
+            return gameScoreForAllPlayers;
         }
 
         private PlayerChoice Whowon(PlayerChoice one, PlayerChoice two)
         {
-            if(one.Choice == two.Choice)
+            if (one.Choice == two.Choice)
             {
                 //we have a draw
                 return null;
             }
 
-            switch(one.Choice)
+            switch (one.Choice)
             {
                 case "rock":
                     {
@@ -51,22 +102,6 @@ namespace RockPaperScissorGameBot.Models
                     return null;
             }
         }
-        public Dictionary<string, int> GetPlayerScores()
-        {
-            PlayerChoice[] arr = playerScores.ToArray<PlayerChoice>();
-            for (int i=0; i<arr.Length; i++)
-            {
-                for(int j=i+1; j<arr.Length; j++)
-                {
-                    PlayerChoice tmp = Whowon(arr[i], arr[j]);
-                    if(tmp == null)
-                    {
-                        continue;
-                    }
-                    dict[tmp.PlayerName]++;
-                }
-            }
-            return dict;
-        }
+
     }
 }

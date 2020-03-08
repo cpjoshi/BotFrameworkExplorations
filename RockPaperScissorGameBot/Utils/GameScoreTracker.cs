@@ -17,12 +17,12 @@ namespace RockPaperScissorGameBot.Utils
         private string _appId;
         private string _appPassword;
         private GameScore _gameScore;
-        private UserConversationStateStore _userConversationStateStore;
+        private UserConversationStateCollection _userConversationStateStore;
         private CardsFactory _cardsFactory;
 
         public GameScoreTracker(IConfiguration config,
             GameScore gameScore,
-            UserConversationStateStore userConversationStateStore,
+            UserConversationStateCollection userConversationStateStore,
             CardsFactory cardsFactory)
         {
             _appId = config["MicrosoftAppId"];
@@ -36,9 +36,10 @@ namespace RockPaperScissorGameBot.Utils
             CancellationToken cancellationToken)
         {
             var obj = (JObject)turnContext.Activity.Value;
+            string gameId = obj["GameId"].ToString();
 
-            //record the choice
-            _gameScore.AddScore(new PlayerChoice()
+            //record the players choice
+            _gameScore.RecordPlayersChoice(gameId, new PlayerChoice()
             {
                 PlayerName = obj["user"].ToString(),
                 Choice = obj["choice"].ToString()
@@ -47,9 +48,15 @@ namespace RockPaperScissorGameBot.Utils
             //Update the Game card with Thank You Card
             await SendThankyouForPlayingCard(turnContext, obj, cancellationToken).ConfigureAwait(false);
 
+            //all players done playing, send the score card to all of them
+            if(_gameScore.isGameOver(gameId)) {
+                await SendScoreCardToAllPlayers(gameId, turnContext, cancellationToken).ConfigureAwait(false);
+            }
         }
 
-        private async Task SendThankyouForPlayingCard(ITurnContext<IMessageActivity> turnContext, JObject obj, CancellationToken cancellationToken)
+        private async Task SendThankyouForPlayingCard(ITurnContext<IMessageActivity> turnContext, 
+            JObject obj, 
+            CancellationToken cancellationToken)
         {
             var card = _cardsFactory.CreateThankYouCardAttachment(obj["user"].ToString());
             var thankYouForPlayingCard = MessageFactory.Attachment(card);
@@ -57,12 +64,17 @@ namespace RockPaperScissorGameBot.Utils
                 .ConfigureAwait(false);
         }
 
-        public async Task PostGameScoreInChannel(ITurnContext<IMessageActivity> turnContext,
+        private async Task SendScoreCardToAllPlayers(string gameId, 
+            ITurnContext<IMessageActivity> turnContext, 
             CancellationToken cancellationToken)
         {
-            await turnContext.SendActivityAsync(MessageFactory.Attachment(
-                _cardsFactory.CreateScoreCardAttachment(_gameScore.GetPlayerScores())), 
-                cancellationToken).ConfigureAwait(false);
+            var card = _cardsFactory.CreateScoreCardAttachment(_gameScore.GetAllPlayerScores(gameId));
+            var scoreCard = MessageFactory.Attachment(card);
+            foreach(var user in _userConversationStateStore)
+            {
+                await UpdateMessageMemberAsync(turnContext, user, scoreCard, cancellationToken)
+                    .ConfigureAwait(false);
+            }
         }
 
         private async Task UpdateMessageMemberAsync(ITurnContext turnContext,
