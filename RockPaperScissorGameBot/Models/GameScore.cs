@@ -1,5 +1,6 @@
 ﻿using Microsoft.Recognizers.Text.DateTime.Japanese;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -14,14 +15,14 @@ namespace RockPaperScissorGameBot.Models
     }
     public class GameScore
     {
-        private Dictionary<string, Dictionary<string, PlayerChoice>> _games = new Dictionary<string, Dictionary<string, PlayerChoice>>();
+        private ConcurrentDictionary<string, Dictionary<string, PlayerChoice>> _games = 
+            new ConcurrentDictionary<string, Dictionary<string, PlayerChoice>>();
         public void AddNewGame(string gameId)
         {
-            //add a new Game
-            if(!_games.ContainsKey(gameId))
-            {
-                _games.Add(gameId, new Dictionary<string, PlayerChoice>());
-            }
+            //Initilize a new game
+            _games.AddOrUpdate(gameId, 
+                new Dictionary<string, PlayerChoice>(), 
+                (key, oldValue) => new Dictionary<string, PlayerChoice>());
         }
 
         public void AddNewPlayer(string gameId, string playerName)

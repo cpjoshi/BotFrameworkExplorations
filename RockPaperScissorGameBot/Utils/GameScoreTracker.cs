@@ -48,7 +48,7 @@ namespace RockPaperScissorGameBot.Utils
             //Update the Game card with Thank You Card
             await SendThankyouForPlayingCard(turnContext, obj, cancellationToken).ConfigureAwait(false);
 
-            //all players done playing, send the score card to all of them
+            //Game over, all players done playing, send the score card to all of them
             if(_gameScore.isGameOver(gameId)) {
                 await SendScoreCardToAllPlayers(gameId, turnContext, cancellationToken).ConfigureAwait(false);
             }
