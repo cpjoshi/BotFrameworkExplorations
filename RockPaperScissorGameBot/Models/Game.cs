@@ -20,19 +20,28 @@ namespace RockPaperScissorGameBot.Models
             PlayersScore.Add(playerName, null);
         }
 
+        /// <summary>
+        /// A player has pressed rock/paper/scissor button
+        /// </summary>
+        /// <param name="playerChoice"></param>
         public void RecordPlayersChoice(PlayerChoice playerChoice)
         {
+            //unknown player, don't record this
             if (!PlayersScore.ContainsKey(playerChoice.PlayerName))
                 return;
 
-            //this player has already recorded his choice, don't record it again
+            //player has already submitted his choice in the past, don't record it again
             if (PlayersScore[playerChoice.PlayerName] != null)
                 return;
 
             PlayersScore[playerChoice.PlayerName] = playerChoice;
         }
 
-        public bool isGameOver()
+        /// <summary>
+        /// Returns true when all players have recorded their choice
+        /// </summary>
+        /// <returns></returns>
+        public bool IsGameOver()
         {
             foreach (var player in PlayersScore.Keys)
             {
@@ -58,12 +67,12 @@ namespace RockPaperScissorGameBot.Models
             {
                 for (int j = i + 1; j < arr.Length; j++)
                 {
-                    PlayerChoice tmp = Whowon(arr[i], arr[j]);
-                    if (tmp == null)
+                    PlayerChoice winner = Whowon(arr[i], arr[j]);
+                    if (winner == null)
                     {
                         continue;
                     }
-                    gameScoreForAllPlayers[tmp.PlayerName]++;
+                    gameScoreForAllPlayers[winner.PlayerName]++;
                 }
             }
             return gameScoreForAllPlayers;
