@@ -13,7 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RockPaperScissorGameBot.Bots;
 using RockPaperScissorGameBot.Models;
 using RockPaperScissorGameBot.Cards;
-using RockPaperScissorGameBot.Utils;
+using RockPaperScissorGameBot.Services;
 
 namespace RockPaperScissorGameBot
 {
@@ -43,11 +43,11 @@ namespace RockPaperScissorGameBot
             // Create the Conversation state. (Used by the Dialog system itself.)
             services.AddSingleton<ConversationState>();
 
-            services.AddSingleton<GameScore>();
+            services.AddSingleton<GameFactory>();
             services.AddSingleton<UserConversationStateCollection>();
             services.AddSingleton<CardsFactory>();
-            services.AddSingleton<GameScoreTracker>();
-            services.AddSingleton<GameStarter>();
+            services.AddSingleton<GameScoreTrackerService>();
+            services.AddSingleton<GameStarterService>();
             services.AddTransient<IBot, GameBot>();
 
         }

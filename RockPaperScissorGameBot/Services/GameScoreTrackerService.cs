@@ -10,24 +10,24 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RockPaperScissorGameBot.Utils
+namespace RockPaperScissorGameBot.Services
 {
-    public class GameScoreTracker
+    public class GameScoreTrackerService
     {
         private string _appId;
         private string _appPassword;
-        private GameScore _gameScore;
+        private GameFactory _gameFactory;
         private UserConversationStateCollection _userConversationStateStore;
         private CardsFactory _cardsFactory;
 
-        public GameScoreTracker(IConfiguration config,
-            GameScore gameScore,
+        public GameScoreTrackerService(IConfiguration config,
+            GameFactory gameFactory,
             UserConversationStateCollection userConversationStateStore,
             CardsFactory cardsFactory)
         {
             _appId = config["MicrosoftAppId"];
             _appPassword = config["MicrosoftAppPassword"];
-            _gameScore = gameScore;
+            _gameFactory = gameFactory;
             _userConversationStateStore = userConversationStateStore;
             _cardsFactory = cardsFactory;
         }
@@ -38,8 +38,9 @@ namespace RockPaperScissorGameBot.Utils
             var obj = (JObject)turnContext.Activity.Value;
             string gameId = obj["GameId"].ToString();
 
+            var game = _gameFactory.GetGame(gameId);
             //record the players choice
-            _gameScore.RecordPlayersChoice(gameId, new PlayerChoice()
+            game.RecordPlayersChoice(new PlayerChoice()
             {
                 PlayerName = obj["user"].ToString(),
                 Choice = obj["choice"].ToString()
@@ -49,7 +50,7 @@ namespace RockPaperScissorGameBot.Utils
             await SendThankyouForPlayingCard(turnContext, obj, cancellationToken).ConfigureAwait(false);
 
             //Game over, all players done playing, send the score card to all of them
-            if(_gameScore.isGameOver(gameId)) {
+            if(game.isGameOver()) {
                 await SendScoreCardToAllPlayers(gameId, turnContext, cancellationToken).ConfigureAwait(false);
             }
         }
@@ -68,7 +69,8 @@ namespace RockPaperScissorGameBot.Utils
             ITurnContext<IMessageActivity> turnContext, 
             CancellationToken cancellationToken)
         {
-            var card = _cardsFactory.CreateScoreCardAttachment(_gameScore.GetAllPlayerScores(gameId));
+            var game = _gameFactory.GetGame(gameId);
+            var card = _cardsFactory.CreateScoreCardAttachment(game.GetAllPlayerScores());
             var scoreCard = MessageFactory.Attachment(card);
             foreach(var user in _userConversationStateStore)
             {

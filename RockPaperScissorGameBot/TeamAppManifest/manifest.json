@@ -1,9 +1,9 @@
 {
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
     "manifestVersion": "1.5",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "id": "6d3aaddc-4fc9-45fc-b5ab-05b62f60a530",
-    "packageName": "EchoBot.Bots",
+    "packageName": "RockPaperScissorGameBot.Bots",
     "developer": {
         "name": "CPJoshi",
         "websiteUrl": "https://www.cpjoshi.com",
@@ -15,11 +15,11 @@
         "outline": "outline.png"
     },
     "name": {
-        "short": "EchoBotJoshi",
-        "full": "PaperScissorGame"
+        "short": "GameBot",
+        "full": "RockPaperScissorGame"
     },
     "description": {
-        "short": "It plays game",
+        "short": "Rock Paper Scissor Game!",
         "full": "It plays paper scissor game"
     },
     "accentColor": "#FFFFFF",
@@ -68,6 +68,34 @@
             ],
             "supportsFiles": true,
             "isNotificationOnly": true
+        }
+    ],
+    "composeExtensions": [
+        {
+            "botId": "6d3aaddc-4fc9-45fc-b5ab-05b62f60a530",
+            "canUpdateConfiguration": true,
+            "commands": [
+                {
+                    "id": "StartGame",
+                    "type": "action",
+                    "title": "Start Game",
+                    "description": "",
+                    "initialRun": false,
+                    "fetchTask": false,
+                    "context": [
+                        "commandBox",
+                        "compose"
+                    ],
+                    "parameters": [
+                        {
+                            "name": "Name",
+                            "title": "RockPaperScissor ",
+                            "description": "",
+                            "inputType": "text"
+                        }
+                    ]
+                }
+            ]
         }
     ],
     "permissions": [

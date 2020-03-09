@@ -12,25 +12,25 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace RockPaperScissorGameBot.Utils
+namespace RockPaperScissorGameBot.Services
 {
-    public class GameStarter
+    public class GameStarterService
     {
         private const string InvitationSent = "Game invitation is sent to all members.";
         private string _appId;
         private string _appPassword;
-        private GameScore _gameScore;
+        private GameFactory _gameFactory;
         private UserConversationStateCollection _userConversationStateStore;
         private CardsFactory _cardsFactory;
 
-        public GameStarter(IConfiguration config,
-            GameScore gameScore,
+        public GameStarterService(IConfiguration config,
+            GameFactory gameFactory,
             UserConversationStateCollection userConversationStateStore,
             CardsFactory cardsFactory)
         {
             _appId = config["MicrosoftAppId"];
             _appPassword = config["MicrosoftAppPassword"];
-            _gameScore = gameScore;
+            _gameFactory = gameFactory;
             _userConversationStateStore = userConversationStateStore;
             _cardsFactory = cardsFactory;
         }
@@ -39,8 +39,7 @@ namespace RockPaperScissorGameBot.Utils
         public async Task StartNewGame(ITurnContext<IMessageActivity> turnContext,
             CancellationToken cancellationToken)
         {
-            string gameId = Guid.NewGuid().ToString();
-            _gameScore.AddNewGame(gameId);
+            var game = _gameFactory.CreateNewGame();
 
             var members = await TeamsInfo.GetMembersAsync(turnContext, cancellationToken).ConfigureAwait(false);
             foreach (var member in members)
@@ -50,8 +49,8 @@ namespace RockPaperScissorGameBot.Utils
                     continue;
                 }
 
-                _gameScore.AddNewPlayer(gameId, member.Name);
-                var gameCard = _cardsFactory.CreateGameCardAttachment(member.Name, gameId);
+                game.AddNewPlayer(member.Name);
+                var gameCard = _cardsFactory.CreateGameCardAttachment(member.Name, game.GameId);
                 var activity = MessageFactory.Attachment(gameCard);
 
                 await MessageMembersAsync(turnContext,

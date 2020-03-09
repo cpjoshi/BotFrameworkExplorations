@@ -1,26 +1,18 @@
-﻿using RockPaperScissorGameBot.Cards;
-using RockPaperScissorGameBot.Models;
-using Microsoft.Bot.Builder;
+﻿using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Teams;
-using Microsoft.Bot.Connector.Authentication;
 using Microsoft.Bot.Schema;
-using Microsoft.Bot.Schema.Teams;
-using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json.Linq;
-using System;
 using System.Threading;
 using System.Threading.Tasks;
-using RockPaperScissorGameBot.Utils;
-using System.Globalization;
+using RockPaperScissorGameBot.Services;
 
 namespace RockPaperScissorGameBot.Bots
 {
     public class GameBot: TeamsActivityHandler
     {
-        private GameStarter _gameStarter;
-        private GameScoreTracker _gameScoreTracker;
+        private GameStarterService _gameStarter;
+        private GameScoreTrackerService _gameScoreTracker;
 
-        public GameBot(GameStarter gameStarter, GameScoreTracker gameScoreTracker)
+        public GameBot(GameStarterService gameStarter, GameScoreTrackerService gameScoreTracker)
         {
             _gameStarter = gameStarter;
             _gameScoreTracker = gameScoreTracker;
