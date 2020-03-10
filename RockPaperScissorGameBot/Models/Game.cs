@@ -1,40 +1,48 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace RockPaperScissorGameBot.Models
 {
-    public class Game
+    public class Game: IEnumerable<Player>
     {
         public string GameId { get; set; }
-        private Dictionary<string, PlayerChoice> PlayersScore;
+        private Dictionary<string, Player> Players;
         public Game(string GameId)
         {
             this.GameId = GameId;
-            PlayersScore = new Dictionary<string, PlayerChoice>();
+            Players = new Dictionary<string, Player>();
         }
 
-        public void AddNewPlayer(string playerName)
+        public Player AddNewPlayer(string playerName, string playerId)
         {
-            PlayersScore.Add(playerName, null);
+            var player = new Player() { PlayerId = playerId, PlayerName = playerName };
+            Players.Add(playerName, player) ;
+            return player;
+        }
+
+        public Player GetPlayer(string playerId)
+        {
+            return Players[playerId];
         }
 
         /// <summary>
         /// A player has pressed rock/paper/scissor button
         /// </summary>
         /// <param name="playerChoice"></param>
-        public void RecordPlayersChoice(PlayerChoice playerChoice)
+        public void RecordPlayersChoice(string playerName, string playerChoice)
         {
             //unknown player, don't record this
-            if (!PlayersScore.ContainsKey(playerChoice.PlayerName))
+            if (!Players.ContainsKey(playerName))
                 return;
 
             //player has already submitted his choice in the past, don't record it again
-            if (PlayersScore[playerChoice.PlayerName] != null)
+            if (Players[playerName].Choice != null)
                 return;
 
-            PlayersScore[playerChoice.PlayerName] = playerChoice;
+            Players[playerName].Choice = playerChoice;
         }
 
         /// <summary>
@@ -43,10 +51,10 @@ namespace RockPaperScissorGameBot.Models
         /// <returns></returns>
         public bool IsGameOver()
         {
-            foreach (var player in PlayersScore.Keys)
+            foreach (var player in Players.Keys)
             {
                 //Some player has not recorded his choice yet, game not over yet
-                if (PlayersScore[player] == null)
+                if (Players[player].Choice == null)
                     return false;
             }
             return true;
@@ -55,7 +63,7 @@ namespace RockPaperScissorGameBot.Models
         public Dictionary<string, int> GetAllPlayerScores()
         {
             var gameScoreForAllPlayers = new Dictionary<string, int>();
-            PlayerChoice[] arr = PlayersScore.Values.ToArray();
+            Player[] arr = Players.Values.ToArray();
 
             //initialize all player scores with 0
             for (int i = 0; i < arr.Length; i++)
@@ -67,7 +75,7 @@ namespace RockPaperScissorGameBot.Models
             {
                 for (int j = i + 1; j < arr.Length; j++)
                 {
-                    PlayerChoice winner = Whowon(arr[i], arr[j]);
+                    Player winner = Whowon(arr[i], arr[j]);
                     if (winner == null)
                     {
                         continue;
@@ -78,7 +86,7 @@ namespace RockPaperScissorGameBot.Models
             return gameScoreForAllPlayers;
         }
 
-        private PlayerChoice Whowon(PlayerChoice one, PlayerChoice two)
+        private Player Whowon(Player one, Player two)
         {
             if (one.Choice == two.Choice)
             {
@@ -103,6 +111,19 @@ namespace RockPaperScissorGameBot.Models
                 default:
                     return null;
             }
+        }
+
+        public IEnumerator<Player> GetEnumerator()
+        {
+            foreach(var player in Players.Values)
+            {
+                yield return player;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

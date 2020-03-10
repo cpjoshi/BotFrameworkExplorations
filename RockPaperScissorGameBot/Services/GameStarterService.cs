@@ -20,18 +20,15 @@ namespace RockPaperScissorGameBot.Services
         private string _appId;
         private string _appPassword;
         private GameFactory _gameFactory;
-        private UserConversationStateCollection _userConversationStateStore;
         private CardsFactory _cardsFactory;
 
         public GameStarterService(IConfiguration config,
             GameFactory gameFactory,
-            UserConversationStateCollection userConversationStateStore,
             CardsFactory cardsFactory)
         {
             _appId = config["MicrosoftAppId"];
             _appPassword = config["MicrosoftAppPassword"];
             _gameFactory = gameFactory;
-            _userConversationStateStore = userConversationStateStore;
             _cardsFactory = cardsFactory;
         }
 
@@ -49,11 +46,12 @@ namespace RockPaperScissorGameBot.Services
                     continue;
                 }
 
-                game.AddNewPlayer(member.Name);
+                var player = game.AddNewPlayer(member.Name, member.Id);
                 var gameCard = _cardsFactory.CreateGameCardAttachment(member.Name, game.GameId);
                 var activity = MessageFactory.Attachment(gameCard);
 
-                await MessageMembersAsync(turnContext,
+                await MessageMembersAsync(turnContext, 
+                    player,
                     member,
                     activity,
                     cancellationToken).ConfigureAwait(false);
@@ -63,7 +61,8 @@ namespace RockPaperScissorGameBot.Services
 
         }
 
-        private async Task MessageMembersAsync(ITurnContext turnContext,
+        private async Task MessageMembersAsync(ITurnContext turnContext, 
+            Player player,
             TeamsChannelAccount teamMember,
             IMessageActivity messageActivity,
             CancellationToken cancellationToken)
@@ -98,7 +97,12 @@ namespace RockPaperScissorGameBot.Services
                         {
                             var response = await t2.SendActivityAsync(messageActivity, c2).ConfigureAwait(true);
                             activityId = response.Id;
-                            _userConversationStateStore.AddConversationReference(teamMember, conversationReference, activityId);
+                            player.userConversationState = new UserConversationState()
+                            {
+                                ActivityId = activityId,
+                                TeamMember = teamMember,
+                                Conversation = conversationReference
+                            };
                         },
                         cancellationToken).ConfigureAwait(true);
 
