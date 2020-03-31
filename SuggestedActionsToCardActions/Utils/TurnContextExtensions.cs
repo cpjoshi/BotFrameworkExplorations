@@ -29,7 +29,7 @@ namespace SuggestedActionsToCardActions.Utils
             }
 
             //This is to clear the UI for the previous suggested actions
-            //await turnContext.ClearLastActivity(cancellationToken);
+            await turnContext.ClearLastActivity(cancellationToken);
 
             //Create a new card having suggested action buttons
             var card = new HeroCard() { 
@@ -58,9 +58,12 @@ namespace SuggestedActionsToCardActions.Utils
             if (string.IsNullOrEmpty(PreviousSuggestedActionActivityId))
                 return null;
 
-            var blankActivity = MessageFactory.Text("Clear");
-            blankActivity.Id = PreviousSuggestedActionActivityId;
-            return await turnContext.UpdateActivityAsync(blankActivity, cancellationToken);
+            //var blankActivity = MessageFactory.Text("Clear");
+            //blankActivity.Id = PreviousSuggestedActionActivityId;
+            //return await turnContext.UpdateActivityAsync(blankActivity, cancellationToken);
+
+            await turnContext.DeleteActivityAsync(PreviousSuggestedActionActivityId, cancellationToken);
+            return null;
         }
     }
 }
