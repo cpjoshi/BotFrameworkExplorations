@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using SuggestedActionsToCardActions.Bots;
+using SuggestedActionsToCardActions.Middleware;
 
 namespace SuggestedActionsToCardActions
 {
@@ -28,6 +29,7 @@ namespace SuggestedActionsToCardActions
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddSingleton<IMiddleware, SuggestedActionsWorkAroundMiddleware>();
 
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
