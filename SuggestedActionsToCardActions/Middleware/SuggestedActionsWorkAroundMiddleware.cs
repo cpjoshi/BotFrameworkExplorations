@@ -17,9 +17,11 @@ namespace SuggestedActionsToCardActions.Middleware
 
         public async Task OnTurnAsync(ITurnContext turnContext, NextDelegate next, CancellationToken cancellationToken = default)
         {
+            //Examine outgoing activity for SuggestedActions and convert it to card with messageBack Actions
+            //All messageBack actions are tagged with "AddedBy"
             turnContext.OnSendActivities(async (newContext, activities, nextSend) =>
             {
-                var suggestionCardActivities = new List<Activity>();
+                var suggestedActionCardActivities = new List<Activity>();
                 foreach(var activity in activities.Where(act => (act.ChannelId == TeamsChannelId && act.SuggestedActions != null)))
                 {
                     var newActivity = newContext.Activity.CreateReply();
@@ -30,14 +32,15 @@ namespace SuggestedActionsToCardActions.Middleware
                         Buttons = activity.SuggestedActions.ToMessageBackActions()
                     };
                     newActivity.Attachments.Add(suggestedActionCard.ToAttachment());
-                    suggestionCardActivities.Add(newActivity);
+                    suggestedActionCardActivities.Add(newActivity);
                     activity.SuggestedActions = null;
                 }
 
-                activities.AddRange(suggestionCardActivities);
+                activities.AddRange(suggestedActionCardActivities);
                 return await nextSend();
             });
 
+            //Examine incoming activity for messageBack actions
             if (turnContext.Activity.ChannelId == TeamsChannelId && 
                 turnContext.Activity.Value != null)
             {
