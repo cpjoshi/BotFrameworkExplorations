@@ -10,7 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuggestedActionsToCardActions", "SuggestedActionsToCardActions\SuggestedActionsToCardActions.csproj", "{28005F00-47CE-48AF-8946-0CC8F7364AFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SuggestedActionsToCardActions", "SuggestedActionsToCardActions\SuggestedActionsToCardActions.csproj", "{28005F00-47CE-48AF-8946-0CC8F7364AFB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AdapativeCardExperiments", "AdapativeCardExperiments\AdapativeCardExperiments.csproj", "{3483847C-2250-417A-B834-0B413CD8B2DF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,6 +28,10 @@ Global
 		{28005F00-47CE-48AF-8946-0CC8F7364AFB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28005F00-47CE-48AF-8946-0CC8F7364AFB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28005F00-47CE-48AF-8946-0CC8F7364AFB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3483847C-2250-417A-B834-0B413CD8B2DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3483847C-2250-417A-B834-0B413CD8B2DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3483847C-2250-417A-B834-0B413CD8B2DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3483847C-2250-417A-B834-0B413CD8B2DF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
