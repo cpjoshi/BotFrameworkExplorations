@@ -36,6 +36,13 @@ namespace AdapativeCardExperiments.Bots
                         card = result.Card;
                     }
                     break;
+
+                case "image":
+                    {
+                        var result = AdaptiveCard.FromJson(File.ReadAllText(@".\Cards\json\ImageCard.json"));
+                        card = result.Card;
+                    }
+                    break;
             }
             await turnContext.SendActivityAsync(
                 MessageFactory.Attachment(CreateApativeCardAttachment(card)), 

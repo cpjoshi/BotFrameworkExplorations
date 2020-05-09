@@ -15,6 +15,9 @@
     <Content Update="appsettings.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Update="Cards\json\ImageCard.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Update="Cards\json\MarksForm.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
