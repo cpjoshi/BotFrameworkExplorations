@@ -1,6 +1,8 @@
 ﻿using Microsoft.Bot.Builder;
 using Microsoft.Bot.Connector;
 using Microsoft.Bot.Schema;
+using Microsoft.CodeAnalysis;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using SuggestedActionsToCardActions.Extensions;
 using System;
@@ -49,7 +51,26 @@ namespace SuggestedActionsToCardActions.Middleware
                     && obj.ContainsKey(Constants.AddedBy)
                     && obj[Constants.AddedBy].ToString() == Constants.SuggestedActionsMiddleware)
                 {
-                    turnContext.Activity.Text = obj["Value"].ToString();
+                    switch(obj["type"].ToString())
+                    {
+                        case ActionTypes.ImBack:
+                            {
+                                turnContext.Activity.Text = obj["Value"].ToString();
+                            }
+                            break;
+                        case ActionTypes.MessageBack:
+                            {
+                                try
+                                {
+                                    turnContext.Activity.Value = JObject.Parse(obj["Value"].ToString());
+                                }
+                                catch (JsonReaderException ex) 
+                                {
+                                    turnContext.Activity.Value = obj["Value"].ToString();
+                                }
+                            } 
+                            break;
+                    }
                     //delete the original suggested actions card in which this button was clicked.
                     _ = turnContext.DeleteActivityAsync(turnContext.Activity.ReplyToId);
                 }

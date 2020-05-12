@@ -3,11 +3,13 @@
 //
 // Generated with Bot Builder V4 SDK Template for Visual Studio EchoBot v4.6.2
 
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
+using Newtonsoft.Json.Linq;
 
 namespace SuggestedActionsToCardActions.Bots
 {
@@ -50,6 +52,38 @@ namespace SuggestedActionsToCardActions.Bots
                                 new CardAction() { Title = "Create Profile", Type = ActionTypes.ImBack, Value = "CreateProfile" },
                                 new CardAction() { Title = "Update Profile", Type = ActionTypes.ImBack, Value = "UpdateProfile" },
                                 new CardAction() { Title = "Delete Profile", Type = ActionTypes.ImBack, Value = "DeleteProfile" },
+                                new CardAction() { Title = "20-Buttons", Type = ActionTypes.ImBack, Value = "20-Buttons" },
+                            },
+                        };
+                    }
+                    break;
+
+                case "20-Buttons":
+                    {
+                        reply.SuggestedActions = new SuggestedActions()
+                        {
+                            Actions = new List<CardAction>()
+                            {
+                                new CardAction() { Title = "Button-1", Type = ActionTypes.ImBack, Value = "Button-1" },
+                                new CardAction() { Title = "Button-2", Type = ActionTypes.ImBack, Value = "Button-2" },
+                                new CardAction() { Title = "Button-3", Type = ActionTypes.ImBack, Value = "Button-3" },
+                                new CardAction() { Title = "Button-4", Type = ActionTypes.ImBack, Value = "Button-4" },
+                                new CardAction() { Title = "Button-5", Type = ActionTypes.ImBack, Value = "Button-5" },
+                                new CardAction() { Title = "Button-6", Type = ActionTypes.ImBack, Value = "Button-6" },
+                                new CardAction() { Title = "Button-7", Type = ActionTypes.ImBack, Value = "Button-7" },
+                                new CardAction() { Title = "Button-8", Type = ActionTypes.ImBack, Value = "Button-8" },
+                                new CardAction() { Title = "Button-9", Type = ActionTypes.ImBack, Value = "Button-9" },
+                                new CardAction() { Title = "Button-10", Type = ActionTypes.ImBack, Value = "Button-10" },
+                                new CardAction() { Title = "Button-11", Type = ActionTypes.ImBack, Value = "Button-11" },
+                                new CardAction() { Title = "Button-12", Type = ActionTypes.ImBack, Value = "Button-12" },
+                                new CardAction() { Title = "Button-13", Type = ActionTypes.ImBack, Value = "Button-13" },
+                                new CardAction() { Title = "Button-14", Type = ActionTypes.ImBack, Value = "Button-14" },
+                                new CardAction() { Title = "Button-15", Type = ActionTypes.ImBack, Value = "Button-15" },
+                                new CardAction() { Title = "Button-16", Type = ActionTypes.ImBack, Value = "Button-16" },
+                                new CardAction() { Title = "Button-17", Type = ActionTypes.ImBack, Value = "Button-17" },
+                                new CardAction() { Title = "Button-18", Type = ActionTypes.ImBack, Value = "Button-18" },
+                                new CardAction() { Title = "Button-19", Type = ActionTypes.ImBack, Value = "Button-19" },
+                                new CardAction() { Title = "Button-20", Type = ActionTypes.ImBack, Value = "Button-20" },
                             },
                         };
                     }
@@ -61,11 +95,47 @@ namespace SuggestedActionsToCardActions.Bots
                         {
                             Actions = new List<CardAction>()
                             {
-                                new CardAction() { Title = "Maternity Leave", Type = ActionTypes.ImBack, Value = "MaternityLeave" },
-                                new CardAction() { Title = "Paternity Leave", Type = ActionTypes.ImBack, Value = "PaternityLeave" },
-                                new CardAction() { Title = "Sick Leave", Type = ActionTypes.ImBack, Value = "SickLeave" },
+                                //test messagebacks
+                                new CardAction 
+                                { 
+                                    Title = "Maternity Leave",
+                                    Type = ActionTypes.MessageBack,
+                                    DisplayText = "Maternity Leave",
+                                    Text = "Maternity",
+                                    Value = new JObject { { "LeaveType", "Maternity" } }
+                                },
+
+                                new CardAction() { Title = "Paternity Leave",
+                                    Type = ActionTypes.MessageBack,
+                                    DisplayText = "Paternity Leave",
+                                    Text = "Paternity",
+                                    Value = new JObject { { "LeaveType", "Paternity" } } 
+                                },
+
+                                new CardAction() { Title = "Sick Leave",
+                                    Type = ActionTypes.MessageBack,
+                                    DisplayText = "Sick Leave",
+                                    Text = "Sick",
+                                    Value = new JObject {{ "LeaveType", "Sick" } } 
+                                },
+
+                                new CardAction() { Title = "Casual Leave",
+                                    Type = ActionTypes.MessageBack,
+                                    DisplayText = "Casual",
+                                    Text = "Casual",
+                                    Value = "Casual" 
+                                }
                             },
                         };
+                    }
+                    break;
+
+                case "Maternity":
+                case "Paternity":
+                case "Sick":
+                case "Casual":
+                    {
+                        reply = MessageFactory.Text($"Value: {turnContext.Activity.Value}", "End");
                     }
                     break;
 

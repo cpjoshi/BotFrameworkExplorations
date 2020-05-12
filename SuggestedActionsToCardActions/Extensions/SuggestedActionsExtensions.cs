@@ -15,13 +15,41 @@ namespace SuggestedActionsToCardActions.Extensions
             var actionsList = new List<CardAction>();
             foreach (var cardAction in suggestedActions.Actions)
             {
-                cardAction.Type = ActionTypes.MessageBack;
-                cardAction.DisplayText = cardAction.Value.ToString();
-                cardAction.Value = new JObject {
-                            {"Value", cardAction.Value.ToString() },
-                            { Constants.AddedBy, Constants.SuggestedActionsMiddleware}
-                        };
-                actionsList.Add(cardAction);
+                switch(cardAction.Type)
+                {
+                    case ActionTypes.ImBack:
+                        {
+                            var newCardAction = new CardAction()
+                            {
+                                Type = ActionTypes.MessageBack,
+                                Title = cardAction.Title,
+                                DisplayText = cardAction.Value.ToString(),
+                                Value = new JObject {
+                                    { "Value", cardAction.Value.ToString() },
+                                    { Constants.AddedBy, Constants.SuggestedActionsMiddleware },
+                                    { "type",  ActionTypes.ImBack}
+                                }
+                            };
+                            actionsList.Add(newCardAction);
+                        }
+                        break;
+
+                    case ActionTypes.MessageBack:
+                        {
+                            var newValue = new JObject {
+                                { "Value", cardAction.Value.ToString() },
+                                { Constants.AddedBy, Constants.SuggestedActionsMiddleware },
+                                { "type", ActionTypes.MessageBack }
+                            };
+
+                            cardAction.Value = newValue;
+                            actionsList.Add(cardAction);
+                        }
+                        break;
+                    
+                    default:
+                        throw new InvalidOperationException($"{cardAction.Type} suggestion action is not supported");
+                }
             }
             return actionsList;
         }

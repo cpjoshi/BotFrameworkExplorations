@@ -16,7 +16,8 @@ namespace SuggestedActionsToCardActions
         public AdapterWithErrorHandler(IConfiguration configuration, ILogger<BotFrameworkHttpAdapter> logger, IMiddleware middleware)
             : base(configuration, logger)
         {
-            this.Use(middleware);
+            if(true == configuration.GetValue<bool>("SuggestedActionsWorkAroundMiddleware"))
+                this.Use(middleware);
 
             OnTurnError = async (turnContext, exception) =>
             {
