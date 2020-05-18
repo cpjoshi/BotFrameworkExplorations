@@ -1,0 +1,24 @@
+{        
+  "type": "AdaptiveCard",
+  "version": "1.0",
+  "body": [
+    {
+      "type": "TextBlock",
+      "size": "extraLarge",
+      "weight": "bolder",
+      "text": "Card 2",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "size": "small",
+      "text": "",
+      "wrap": true
+    },
+    {
+      "type": "TextBlock",
+      "text": "Update",
+      "wrap": true
+    }
+  ]
+}

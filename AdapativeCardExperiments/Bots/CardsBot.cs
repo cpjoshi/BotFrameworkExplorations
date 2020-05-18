@@ -37,12 +37,36 @@ namespace AdapativeCardExperiments.Bots
                     }
                     break;
 
-                case "image":
+                case "img-base64":
                     {
                         var result = AdaptiveCard.FromJson(File.ReadAllText(@".\Cards\json\ImageCard.json"));
                         card = result.Card;
                     }
                     break;
+                
+                case "img":
+                    {
+                        var result = AdaptiveCard.FromJson(File.ReadAllText(@".\Cards\json\ImageCardUrl.json"));
+                        card = result.Card;
+                    }
+                    break;
+
+                case "carousel":
+                    {
+                        Activity replyToConversation = MessageFactory.Text("Should see in carousel format");
+                        replyToConversation.AttachmentLayout = AttachmentLayoutTypes.Carousel;
+                        replyToConversation.Attachments = new List<Attachment>();
+
+                        var card1 = AdaptiveCard.FromJson(File.ReadAllText(@".\Cards\json\card1.json"));
+                        var card2 = AdaptiveCard.FromJson(File.ReadAllText(@".\Cards\json\card2.json"));
+
+                        replyToConversation.Attachments.Add(CreateApativeCardAttachment(card1.Card));
+                        replyToConversation.Attachments.Add(CreateApativeCardAttachment(card2.Card));
+
+                        await turnContext.SendActivityAsync(replyToConversation);
+                        return;
+                    }
+                    //break;
             }
             await turnContext.SendActivityAsync(
                 MessageFactory.Attachment(CreateApativeCardAttachment(card)), 
