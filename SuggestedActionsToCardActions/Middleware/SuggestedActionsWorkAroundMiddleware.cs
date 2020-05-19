@@ -51,13 +51,9 @@ namespace SuggestedActionsToCardActions.Middleware
                     && obj.ContainsKey(Constants.AddedBy)
                     && obj[Constants.AddedBy].ToString() == Constants.SuggestedActionsMiddleware)
                 {
+                    // In case the suggestedAction was a MessageBack
                     switch(obj["type"].ToString())
                     {
-                        case ActionTypes.ImBack:
-                            {
-                                turnContext.Activity.Text = obj["Value"].ToString();
-                            }
-                            break;
                         case ActionTypes.MessageBack:
                             {
                                 try

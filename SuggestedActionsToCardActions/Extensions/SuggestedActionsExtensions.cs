@@ -23,9 +23,9 @@ namespace SuggestedActionsToCardActions.Extensions
                             {
                                 Type = ActionTypes.MessageBack,
                                 Title = cardAction.Title,
+                                Text = cardAction.Value.ToString(),
                                 DisplayText = cardAction.Value.ToString(),
                                 Value = new JObject {
-                                    { "Value", cardAction.Value.ToString() },
                                     { Constants.AddedBy, Constants.SuggestedActionsMiddleware },
                                     { "type",  ActionTypes.ImBack}
                                 }

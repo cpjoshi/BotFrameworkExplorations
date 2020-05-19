@@ -42,6 +42,20 @@ namespace SuggestedActionsToCardActions.Bots
                         return;
                     }
 
+                case "Help":
+                    {
+                        reply = MessageFactory.Text("Did the resolution work for you?");
+                        reply.SuggestedActions = new SuggestedActions()
+                        {
+                            Actions = new List<CardAction>()
+                            {
+                                new CardAction() {Title = "Yes", Type=ActionTypes.ImBack, Value="Yes"},
+                                new CardAction() {Title = "No", Type=ActionTypes.ImBack, Value="No"}
+                            }
+                        };
+                    }
+                    break;
+
                 case "EmployeeProfile":
                     {
                         reply.SuggestedActions = new SuggestedActions()
@@ -174,7 +188,7 @@ namespace SuggestedActionsToCardActions.Bots
 
         private static Activity WelcomeMessage()
         {
-            var reply = MessageFactory.Text("Hello and welcome, choose one of the actions below?");
+            var reply = MessageFactory.Text("Hello and welcome, choose one of the actions below");
 
             reply.SuggestedActions = new SuggestedActions()
             {
