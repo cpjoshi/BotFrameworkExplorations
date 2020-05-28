@@ -12,6 +12,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 using AdapativeCardExperiments.Bots;
+using AdapativeCardExperiments.Dialogs;
+using Microsoft.EntityFrameworkCore.InMemory.Storage.Internal;
 
 namespace AdapativeCardExperiments
 {
@@ -32,8 +34,13 @@ namespace AdapativeCardExperiments
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
 
+            var botStateStorage = new MemoryStorage();
+            var conversationState = new ConversationState(botStateStorage);
+            services.AddSingleton(conversationState);
+
+            services.AddSingleton<PromptDialog>();
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
-            services.AddTransient<IBot, CardsBot>();
+            services.AddTransient<IBot, CardsBot<PromptDialog>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

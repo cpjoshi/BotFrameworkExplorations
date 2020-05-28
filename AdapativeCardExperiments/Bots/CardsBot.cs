@@ -10,12 +10,21 @@ using System.Threading;
 using System.Threading.Tasks;
 using AdaptiveCards;
 using Microsoft.Bot.Builder;
+using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Schema;
 
 namespace AdapativeCardExperiments.Bots
 {
-    public class CardsBot : ActivityHandler
+    public class CardsBot<T> : ActivityHandler where T: Dialog
     {
+        private Dialog _promptDialog;
+        private ConversationState _conversationState;
+        public CardsBot(T dialog, ConversationState conversationState)
+        {
+            _promptDialog = dialog;
+            _conversationState = conversationState;
+        }
+
         protected override async Task OnMessageActivityAsync(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
         {
             turnContext.Activity.RemoveRecipientMention();
@@ -51,6 +60,14 @@ namespace AdapativeCardExperiments.Bots
                     }
                     break;
 
+                case "prompts":
+                    {
+                        await _promptDialog.RunAsync(turnContext, 
+                            _conversationState.CreateProperty<DialogState>(nameof(DialogState)), 
+                            cancellationToken);
+                        return;
+                    }
+
                 case "carousel":
                     {
                         Activity replyToConversation = MessageFactory.Text("Should see in carousel format");
@@ -66,7 +83,10 @@ namespace AdapativeCardExperiments.Bots
                         await turnContext.SendActivityAsync(replyToConversation);
                         return;
                     }
-                    //break;
+                
+                default:
+                    await turnContext.SendActivityAsync(MessageFactory.Text("Complete!"), cancellationToken);
+                    return;
             }
             await turnContext.SendActivityAsync(
                 MessageFactory.Attachment(CreateApativeCardAttachment(card)), 
