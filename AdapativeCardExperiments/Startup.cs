@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using AdapativeCardExperiments.Bots;
 using AdapativeCardExperiments.Dialogs;
 using Microsoft.EntityFrameworkCore.InMemory.Storage.Internal;
+using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 
 namespace AdapativeCardExperiments
 {
@@ -30,6 +31,13 @@ namespace AdapativeCardExperiments
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            // In production, the React files will be served from this directory
+            services.AddSpaStaticFiles(configuration =>
+            {
+                configuration.RootPath = "bot-tab/build";
+            });
+
 
             // Create the Bot Framework Adapter with error handling enabled.
             services.AddSingleton<IBotFrameworkHttpAdapter, AdapterWithErrorHandler>();
@@ -57,9 +65,21 @@ namespace AdapativeCardExperiments
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            app.UseSpaStaticFiles();
+
             app.UseWebSockets();
             //app.UseHttpsRedirection();
             app.UseMvc();
+
+            app.UseSpa(spa =>
+            {
+                spa.Options.SourcePath = "bot-tab/build";
+
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
+            });
         }
     }
 }

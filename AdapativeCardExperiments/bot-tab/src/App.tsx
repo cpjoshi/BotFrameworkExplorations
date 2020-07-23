@@ -1,0 +1,26 @@
+import React from 'react';
+import { Router, Route, Switch, Link, NavLink } from "react-router-dom";
+import * as createHistory from "history";
+import './App.css';
+import configuration from './components/configuration';
+import Introduction from './components/introduction';
+import SSOPage from './components/ssopage';
+import { MessageForm } from './components/MessageForm';
+
+export const history = createHistory.createBrowserHistory();
+
+function App() {
+  return (
+      <Router history={history}>
+          <div>
+              <Switch>
+                  <Route path="/config" component={configuration} />
+                  <Route path="/intro" component={Introduction} />
+                  <Route path="/sso" component={SSOPage} />
+                  <Route path="/message" component={MessageForm} />
+              </Switch>
+          </div>
+      </Router>  );
+}
+
+export default App;

@@ -1,0 +1,75 @@
+{
+  "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.5",
+  "version": "1.0",
+  "id": "14a6686e-e903-4e55-b945-dc2472381849",
+  "packageName": "AdapativeCardExperiments.Bots",
+  "developer": {
+    "name": "Microsoft Corp",
+    "websiteUrl": "https://example.azurewebsites.net",
+    "privacyUrl": "https://example.azurewebsites.net/privacy",
+    "termsOfUseUrl": "https://example.azurewebsites.net/termsofuse"
+  },
+  "name": {
+    "short": "BotFrameworkExplorations",
+    "full": "Microsoft Teams V4 Tests"
+  },
+  "description": {
+    "short": "Microsoft Teams V4 Tests",
+    "full": "Samples - Adaptive Cards"
+  },
+  "icons": {
+    "outline": "icon-outline.png",
+    "color": "icon-color.png"
+  },
+  "accentColor": "#abcdef",
+  "bots": [
+    {
+      "botId": "14a6686e-e903-4e55-b945-dc2472381849",
+      "scopes": [
+        "team",
+        "personal",
+        "groupchat"
+      ]
+    }
+  ],
+  "configurableTabs": [
+    {
+      "configurationUrl": "https://85e9246d8e0a.ngrok.io/config?tenant={tid}&channel={channelId}&locale={locale}",
+      "scopes": [
+        "team",
+        "groupchat"
+      ],
+      "canUpdateConfiguration": true
+    }
+  ],
+  "staticTabs": [
+    {
+      "entityId": "start",
+      "name": "Introduction",
+      "contentUrl": "https://85e9246d8e0a.ngrok.io/intro?host=msteams",
+      "websiteUrl": "https://85e9246d8e0a.ngrok.io",
+      "scopes": [ "personal" ]
+    },
+    {
+      "entityId": "login",
+      "name": "SSO",
+      "contentUrl": "https://85e9246d8e0a.ngrok.io/sso?host=msteams",
+      "websiteUrl": "https://85e9246d8e0a.ngrok.io",
+      "scopes": [ "personal" ]
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "botexplorations.azurewebsites.net",
+    "botexplorations.azurefd.net",
+    "85e9246d8e0a.ngrok.io"
+  ],
+  "webApplicationInfo": {
+    "id": "14a6686e-e903-4e55-b945-dc2472381849",
+    "resource": "api://botexplorations.azurefd.net/14a6686e-e903-4e55-b945-dc2472381849"
+  }
+}

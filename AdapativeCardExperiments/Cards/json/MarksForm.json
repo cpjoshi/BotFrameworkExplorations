@@ -156,6 +156,11 @@
       "type": "Action.Submit",
       "title": "Add another subject",
       "id": "addsubject"
+    },
+    {
+      "type": "Action.OpenUrl",
+      "title": "This will open my tab",
+      "url": "https://teams.microsoft.com/l/entity/14a6686e-e903-4e55-b945-dc2472381849/myconfigTab?context=%7B%22subEntityId%22%3Anull%2C%22channelId%22%3A%2219%3Afc9ebea979fc4b4392d79d3ec435b5fd%40thread.tacv2%22%7D&groupId=0bad0f88-a36f-421f-8e14-4dcb7dfbefa3&tenantId=a1f87087-9236-4db3-8c75-0de2f93a7184"
     }
   ]
 }

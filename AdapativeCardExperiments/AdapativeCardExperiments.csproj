@@ -9,8 +9,13 @@
   <ItemGroup>
     <PackageReference Include="AdaptiveCards" Version="1.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="2.1.1" />
     <PackageReference Include="Microsoft.Bot.Builder.Dialogs" Version="4.9.1" />
     <PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.7.0" />
+    <PackageReference Include="Microsoft.TypeScript.MSBuild" Version="3.9.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 
     <ItemGroup>
@@ -28,5 +33,13 @@
     <ItemGroup>
       <Folder Include="Manifest\" />
     </ItemGroup>
+
+    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+      <Exec Command="cd .\bot-tab&#xD;&#xA;npm run build" />
+    </Target>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+      <Exec Command="echo compressing&#xD;&#xA;cd .\Manifest&#xD;&#xA;powershell &quot;.\manifestcompress.ps1&quot;&#xD;&#xA;&#xD;&#xA;echo compressinglocalhost&#xD;&#xA;cd ..&#xD;&#xA;cd .\ManifestLocalHost&#xD;&#xA;powershell &quot;.\manifestcompress.ps1&quot;" />
+    </Target>
 
 </Project>

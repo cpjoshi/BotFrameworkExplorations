@@ -11,11 +11,13 @@ using System.Threading.Tasks;
 using AdaptiveCards;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Teams;
 using Microsoft.Bot.Schema;
+using Microsoft.Bot.Schema.Teams;
 
 namespace AdapativeCardExperiments.Bots
 {
-    public class CardsBot<T> : ActivityHandler where T: Dialog
+    public class CardsBot<T> : TeamsActivityHandler where T: Dialog
     {
         private Dialog _promptDialog;
         private ConversationState _conversationState;
@@ -83,7 +85,7 @@ namespace AdapativeCardExperiments.Bots
                         await turnContext.SendActivityAsync(replyToConversation);
                         return;
                     }
-                
+
                 default:
                     await turnContext.SendActivityAsync(MessageFactory.Text("Complete!"), cancellationToken);
                     return;
@@ -114,5 +116,23 @@ namespace AdapativeCardExperiments.Bots
             return adaptiveCardAttachment;
 
         }
+
+        protected override async Task<TaskModuleResponse> OnTeamsTaskModuleSubmitAsync(
+            ITurnContext<IInvokeActivity> turnContext, 
+            TaskModuleRequest taskModuleRequest, 
+            CancellationToken cancellationToken)
+        {
+            var reply = MessageFactory.Text("OnTeamsTaskModuleSubmitAsync Value: " + taskModuleRequest);
+            await turnContext.SendActivityAsync(reply);
+
+            return new TaskModuleResponse
+            {
+                Task = new TaskModuleMessageResponse()
+                {
+                    Value = "Thanks!",
+                },
+            };
+        }
+
     }
 }
