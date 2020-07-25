@@ -19,6 +19,8 @@ jobs:
         dotnet-version: 3.1.301
     - name: Install dependencies
       run: dotnet restore
+    - name: Install npm packages
+      run: cd AdapativeCardExperiments\bot-tab && npm install
     - name: Build
       run: dotnet build --configuration Release --no-restore
     - name: Test
