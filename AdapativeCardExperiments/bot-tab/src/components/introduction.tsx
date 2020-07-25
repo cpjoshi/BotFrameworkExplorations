@@ -1,7 +1,7 @@
 ﻿import React from 'react';
 import * as microsoftTeams from '@microsoft/teams-js'
 import { Button, TextArea, Input } from '@fluentui/react-northstar';
-import { getBaseUrl } from '../ConfigureVariables';
+import { getBaseUrl, getAppId } from '../ConfigureVariables';
 
 export interface IAppState {
     teamContext: microsoftTeams.Context | null;
@@ -24,19 +24,15 @@ class Introduction extends React.Component<{}, IAppState> {
 
     onShowTaskModule() {
         let taskInfo: microsoftTeams.TaskInfo = {
-            title: "",
-            height: 0,
-            width: 0,
-            url: "",
+            title: "Sending Alert to your team",
+            height: 510,
+            width: 500,
+            url: `${getBaseUrl()}/message?host=msteams`,
             card: "",
             fallbackUrl: "",
-            completionBotId: "",
+            completionBotId: getAppId(),
         };
 
-        taskInfo.url = `${getBaseUrl()}/message?host=msteams`;
-        taskInfo.title = "Sending Alert to your team";
-        taskInfo.height = 510;
-        taskInfo.width = 430;
         let submitHandler = (err: any, result: any) => {
             console.log(`Submit handler - err: ${err}`);
             console.log(`Submit handler - result: ${result}`);

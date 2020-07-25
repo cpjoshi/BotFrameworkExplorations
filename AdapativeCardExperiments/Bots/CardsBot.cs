@@ -14,11 +14,13 @@ using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Builder.Teams;
 using Microsoft.Bot.Schema;
 using Microsoft.Bot.Schema.Teams;
+using Newtonsoft.Json.Linq;
 
 namespace AdapativeCardExperiments.Bots
 {
     public class CardsBot<T> : TeamsActivityHandler where T: Dialog
     {
+        private const string taskUrl = "https://85e9246d8e0a.ngrok.io/message?host=msteams";
         private Dialog _promptDialog;
         private ConversationState _conversationState;
         public CardsBot(T dialog, ConversationState conversationState)
@@ -86,6 +88,28 @@ namespace AdapativeCardExperiments.Bots
                         return;
                     }
 
+                case "invoke":
+                    {
+                        var c = new HeroCard
+                        {
+                            Title = "Task Module Demo",
+                            Text = "Click the below button to launch Task Module",
+
+                            Buttons = new List<CardAction>
+                            {
+                                new CardAction
+                                {
+                                    Type= "invoke",
+                                    Title = "Open Task Module",
+                                    Text = "Open Task Module",
+                                    Value = "{\"type\": \"task/fetch\", \"data\": \"alertform\"}"
+                                }
+                            }
+                        };
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(c.ToAttachment()));
+                        return;
+                    }
+
                 default:
                     await turnContext.SendActivityAsync(MessageFactory.Text("Complete!"), cancellationToken);
                     return;
@@ -117,21 +141,49 @@ namespace AdapativeCardExperiments.Bots
 
         }
 
+        protected override Task<TaskModuleResponse> OnTeamsTaskModuleFetchAsync(ITurnContext<IInvokeActivity> turnContext, 
+            TaskModuleRequest taskModuleRequest, CancellationToken cancellationToken)
+        {
+            var asJobject = JObject.FromObject(taskModuleRequest.Data);
+            var formname = asJobject["data"].ToString();
+
+            TaskModuleResponse taskModuleResponse = null;
+            switch (formname)
+            {
+                case "alertform":
+                    {
+                        var taskInfo = new TaskModuleTaskInfo();
+                        taskInfo.Url = taskUrl;
+                        taskInfo.Width = 510;
+                        taskInfo.Height = 500;
+                        taskInfo.Title = "Fetched from bot";
+
+                        taskModuleResponse = new TaskModuleResponse
+                        {
+                            Task = new TaskModuleContinueResponse()
+                            {
+                                Value = taskInfo,
+                            },
+                        };
+                    }
+                    break;
+                default:
+                    break;
+            }
+
+
+            return Task.FromResult(taskModuleResponse);
+        }
+
         protected override async Task<TaskModuleResponse> OnTeamsTaskModuleSubmitAsync(
             ITurnContext<IInvokeActivity> turnContext, 
             TaskModuleRequest taskModuleRequest, 
             CancellationToken cancellationToken)
         {
             var reply = MessageFactory.Text("OnTeamsTaskModuleSubmitAsync Value: " + taskModuleRequest);
-            await turnContext.SendActivityAsync(reply);
+            _ = turnContext.SendActivityAsync(reply);
 
-            return new TaskModuleResponse
-            {
-                Task = new TaskModuleMessageResponse()
-                {
-                    Value = "Thanks!",
-                },
-            };
+            return null;
         }
 
     }
