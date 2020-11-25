@@ -57,6 +57,13 @@
       "contentUrl": "https://botexplorations.azurefd.net/sso?host=msteams",
       "websiteUrl": "https://botexplorations.azurefd.net",
       "scopes": [ "personal" ]
+    },
+    {
+      "entityId": "iFramePage",
+      "name": "iFramePage",
+      "contentUrl": "https://botexplorations.azurefd.net/iframepage?host=msteams",
+      "websiteUrl": "https://botexplorations.azurefd.net",
+      "scopes": [ "personal" ]
     }
   ],
   "permissions": [

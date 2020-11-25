@@ -28,7 +28,7 @@ class Introduction extends React.Component<{}, IAppState> {
             height: 510,
             width: 500,
             url: `${getBaseUrl()}/message?host=msteams`,
-            card: "",
+            /*card: "",*/
             fallbackUrl: "",
             completionBotId: getAppId(),
         };
@@ -37,7 +37,7 @@ class Introduction extends React.Component<{}, IAppState> {
             console.log(`Submit handler - err: ${err}`);
             console.log(`Submit handler - result: ${result}`);
         };
-
+        
         microsoftTeams.tasks.startTask(taskInfo, submitHandler);
     }
 
@@ -45,12 +45,41 @@ class Introduction extends React.Component<{}, IAppState> {
     render() {
         return (
             <div>
-                Hello {this.state.teamContext?.userPrincipalName}, this is your tab!
+                Hello and Hi. {this.state.teamContext?.userPrincipalName}, this is your tab!
                 <div>
                     Your userAgent is: {navigator.userAgent}
                 </div>
                 <div>
                     <Button content="Launch Task Module" onClick={this.onShowTaskModule} primary />
+                </div>
+                <div>
+                    <a href="/sample.pdf" download>Click This to Download</a>
+                </div>
+                <div>
+                    <a href="/sso?host=msteams">Visit sso page!</a>
+                </div>
+                <div>
+                    <form>
+                        <h1>Hello...</h1>
+                        <p>Enter your name:</p>
+                        <input type='text' name='username' />
+                        <p>Enter your age:</p>
+                        <input type='text' name='age' />
+                        <p>Enter your brothers age:</p>
+                        <input type='text' name='agebrother' />
+                        <p>Enter your sisters age:</p>
+                        <input type='text' name='agesister' />
+                        <p>Enter your grandma age:</p>
+                        <input type='text' name='agegrandma' />
+                        <p>Enter your great grandfathers age:</p>
+                        <input type='text' name='agefather' />
+                        <p>Enter your age1:</p>
+                        <input type='text' name='age1' />
+                        <p>Enter your age2:</p>
+                        <input type='text' name='age2' />
+                        <p>Enter your age3:</p>
+                        <input type='text' name='age3' />
+                    </form>
                 </div>
             </div>
             );

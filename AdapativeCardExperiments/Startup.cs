@@ -13,8 +13,12 @@ using Microsoft.Extensions.DependencyInjection;
 
 using AdapativeCardExperiments.Bots;
 using AdapativeCardExperiments.Dialogs;
-using Microsoft.EntityFrameworkCore.InMemory.Storage.Internal;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Identity.Web;
+using Microsoft.Identity.Web.TokenCacheProviders.InMemory;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using AdapativeCardExperiments.Authentication;
 
 namespace AdapativeCardExperiments
 {
@@ -30,7 +34,9 @@ namespace AdapativeCardExperiments
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services
+                .AddMvcCore()
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -49,12 +55,32 @@ namespace AdapativeCardExperiments
             services.AddSingleton<PromptDialog>();
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, CardsBot<PromptDialog>>();
+
+            
+            services.AddMicrosoftWebApiAuthentication(Configuration)                
+                .AddMicrosoftWebAppCallsWebApi(Configuration, Configuration.GetValue<string>("Scopes").Split(","))
+                .AddInMemoryTokenCaches();
+
+/*            services.AddProtectedWebApi(Configuration)
+                .AddProtectedWebApiCallsProtectedWebApi(Configuration)
+                .AddInMemoryTokenCaches();
+*/
+            var azureADOptions = new AzureADOptions();
+            Configuration.Bind("AzureAd", azureADOptions);
+
+            services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
+            {
+                options.Authority = $"{azureADOptions.Instance}{azureADOptions.TenantId}/v2.0";
+                options.SaveToken = true;
+            });
+
+            services.AddAuthorization();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.EnvironmentName == Environments.Development)
             {
                 app.UseDeveloperExceptionPage();
             }
@@ -66,11 +92,16 @@ namespace AdapativeCardExperiments
             app.UseDefaultFiles();
             app.UseStaticFiles();
             app.UseSpaStaticFiles();
-
+            
             app.UseWebSockets();
             //app.UseHttpsRedirection();
-            app.UseMvc();
-
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
             app.UseSpa(spa =>
             {
                 spa.Options.SourcePath = "bot-tab/build";
