@@ -19,6 +19,7 @@ using Microsoft.Identity.Web;
 using Microsoft.Identity.Web.TokenCacheProviders.InMemory;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AdapativeCardExperiments.Authentication;
+using AdapativeCardExperiments.Repository;
 
 namespace AdapativeCardExperiments
 {
@@ -55,7 +56,7 @@ namespace AdapativeCardExperiments
             services.AddSingleton<PromptDialog>();
             // Create the bot as a transient. In this case the ASP Controller is expecting an IBot.
             services.AddTransient<IBot, CardsBot<PromptDialog>>();
-
+            services.AddSingleton<KycRepository>();
             
             services.AddMicrosoftWebApiAuthentication(Configuration)                
                 .AddMicrosoftWebAppCallsWebApi(Configuration, Configuration.GetValue<string>("Scopes").Split(","))

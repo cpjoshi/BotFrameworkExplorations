@@ -58,7 +58,7 @@ export default class SSOPage extends React.Component<{}, AuthResult> {
                 <Button content="Sign In" onClick={this.onSignIn} primary />
                 {this.state.authdone && 
                     <div>
-                    <Input fluid placeholder="type graph api url here..." ref={ el => this.apiUrl=el }/>
+                    <Input fluid placeholder="type graph api url here..." ref={ (el:any) => this.apiUrl=el }/>
                     <Button content="Call" onClick={this.onMakeCall} primary />
                     <TextArea disabled fluid placeholder="Results will appear here" value={this.state.apiresult} />
                     </div>

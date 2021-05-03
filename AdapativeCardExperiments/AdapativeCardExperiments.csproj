@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="bot-tab\src\kyc-service-worker.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AdaptiveCards" Version="1.2.4" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.7" />
     <PackageReference Include="Microsoft.Bot.Builder.Dialogs" Version="4.9.1" />
@@ -32,12 +36,9 @@
   </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="bot-tab\src\" />
       <Folder Include="Manifest\" />
     </ItemGroup>
-
-    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-      <Exec Command="cd .\bot-tab&#xD;&#xA;npm run build" />
-    </Target>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="echo compressing&#xD;&#xA;cd .\Manifest&#xD;&#xA;powershell &quot;.\manifestcompress.ps1&quot;&#xD;&#xA;&#xD;&#xA;echo compressinglocalhost&#xD;&#xA;cd ..&#xD;&#xA;cd .\ManifestLocalHost&#xD;&#xA;powershell &quot;.\manifestcompress.ps1&quot;" />

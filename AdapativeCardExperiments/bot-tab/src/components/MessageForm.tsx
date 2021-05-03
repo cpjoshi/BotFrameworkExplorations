@@ -1,8 +1,11 @@
 ﻿import React from 'react';
 import * as microsoftTeams from '@microsoft/teams-js'
-import { Button, TextArea, Input } from '@fluentui/react-northstar';
-import { IAppState } from './introduction';
+import { Button } from '@fluentui/react-northstar';
 import { getAppId } from '../ConfigureVariables';
+
+export interface IAppState {
+    teamContext: microsoftTeams.Context | null
+}
 
 export class MessageForm extends React.Component<{}, IAppState> {
     constructor(props: {}) {

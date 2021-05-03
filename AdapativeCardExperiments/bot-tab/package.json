@@ -3,25 +3,36 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/react": "^16.9.35",
-    "@fluentui/react-northstar": "^0.49.0",
-    "@microsoft/teams-js": "1.8.0-beta.0",
-    "@testing-library/jest-dom": "^4.2.4",
-    "@testing-library/react": "^9.5.0",
-    "@testing-library/user-event": "^7.2.1",
-    "@types/jest": "^24.9.1",
-    "@types/node": "^12.12.44",
+    "@fluentui/react-northstar": "^0.51.6",
+    "@microsoft/teams-js": "^1.8.0",
+    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/react": "^11.1.0",
+    "@testing-library/user-event": "^12.1.10",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^12.0.0",
+    "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
-    "@types/react-router-dom": "^5.1.5",
-    "msteams-ui-components-react": "^0.8.4",
-    "msteams-ui-icons-react": "^0.4.2",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
+    "@types/react-router-dom": "^5.1.7",
+    "file-saver": "^2.0.5",
+    "idb": "^6.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "3.4.1",
-    "react-iframe": "1.8.0",
-    "typescript": "^3.7.5",
-    "typestyle": "^2.1.0"
+    "react-scripts": "4.0.1",
+    "typescript": "^4.0.3",
+    "web-vitals": "^0.2.4",
+    "workbox-background-sync": "^5.1.3",
+    "workbox-broadcast-update": "^5.1.3",
+    "workbox-cacheable-response": "^5.1.3",
+    "workbox-core": "^5.1.3",
+    "workbox-expiration": "^5.1.3",
+    "workbox-google-analytics": "^5.1.3",
+    "workbox-navigation-preload": "^5.1.3",
+    "workbox-precaching": "^5.1.3",
+    "workbox-range-requests": "^5.1.3",
+    "workbox-routing": "^5.1.3",
+    "workbox-strategies": "^5.1.3",
+    "workbox-streams": "^5.1.3"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -30,7 +41,10 @@
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
   "browserslist": {
     "production": [
@@ -43,5 +57,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/file-saver": "^2.0.1",
+    "comlink-loader": "^2.0.0"
   }
 }

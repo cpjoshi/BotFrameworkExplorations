@@ -20,7 +20,7 @@ namespace AdapativeCardExperiments.Bots
 {
     public class CardsBot<T> : TeamsActivityHandler where T: Dialog
     {
-        private const string taskUrl = "https://85e9246d8e0a.ngrok.io/message?host=msteams";
+        private const string taskUrl = "https://botexplorations.azurefd.net/message?host=msteams";
         private Dialog _promptDialog;
         private ConversationState _conversationState;
         public CardsBot(T dialog, ConversationState conversationState)
@@ -103,6 +103,12 @@ namespace AdapativeCardExperiments.Bots
                                     Title = "Open Task Module",
                                     Text = "Open Task Module",
                                     Value = "{\"type\": \"task/fetch\", \"data\": \"alertform\"}"
+                                },
+                                new CardAction
+                                {
+                                    Type = "openUrl",
+                                    Title = "StageViewDeeplink",
+                                    Value = "https://teams.microsoft.com/l/stage/2a527703-1f6f-4559-a332-d8a7d288cd88/0?context={\"contentUrl\":\"https%3A%2F%2Fmicrosoft.sharepoint.com%2Fteams%2FLokisSandbox%2FSitePages%2FSandbox-Page.aspx\", \"websiteURL\":\"https%3A%2F%2Fmicrosoft.sharepoint.com%2Fteams%2FLokisSandbox%2FSitePages%2FSandbox-Page.aspx\", \"title\":\"Contoso\"}",
                                 }
                             }
                         };
@@ -180,7 +186,10 @@ namespace AdapativeCardExperiments.Bots
             TaskModuleRequest taskModuleRequest, 
             CancellationToken cancellationToken)
         {
-            var reply = MessageFactory.Text("OnTeamsTaskModuleSubmitAsync Value: " + taskModuleRequest);
+            var asJobject = JObject.FromObject(taskModuleRequest.Data);
+            var data = asJobject.ToString();
+
+            var reply = MessageFactory.Text("OnTeamsTaskModuleSubmitAsync Data Sent: " + data);
             _ = turnContext.SendActivityAsync(reply);
 
             return null;
