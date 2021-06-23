@@ -45,16 +45,16 @@
   ],
   "staticTabs": [
     {
-      "entityId": "KycForm",
-      "name": "KycForm",
-      "contentUrl": "https://botexplorations.azurefd.net/kycform?host=msteams",
+      "entityId": "start",
+      "name": "Introduction",
+      "contentUrl": "https://botexplorations.azurefd.net/intro?host=msteams",
       "websiteUrl": "https://botexplorations.azurefd.net",
       "scopes": [ "personal" ]
     },
     {
-      "entityId": "start",
-      "name": "Introduction",
-      "contentUrl": "https://botexplorations.azurefd.net/intro?host=msteams",
+      "entityId": "KycForm",
+      "name": "KycForm",
+      "contentUrl": "https://botexplorations.azurefd.net/kycform?host=msteams",
       "websiteUrl": "https://botexplorations.azurefd.net",
       "scopes": [ "personal" ]
     },

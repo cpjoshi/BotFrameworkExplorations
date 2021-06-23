@@ -5,20 +5,25 @@ import { getBaseUrl, getAppId, GlobalVars } from '../ConfigureVariables';
 import * as FileSaver from 'file-saver';
 import TestIndexedDb from '../storage/teststore';
 
+
 export interface IAppState {
     teamContext: microsoftTeams.Context | null;
     pwaFeature: string;
 }
 
 class Introduction extends React.Component<{}, IAppState> {
+    testIndexDb: TestIndexedDb;
+
     constructor(props: {}) {
         super(props);
         microsoftTeams.initialize();
+        this.testIndexDb = new TestIndexedDb("myjunkdb");
         this.onShowTaskModule = this.onShowTaskModule.bind(this);
         this.onPWAFeatureCheck = this.onPWAFeatureCheck.bind(this);
         this.openDeepLink = this.openDeepLink.bind(this);
         this.infiteLoop = this.infiteLoop.bind(this);
         this.onOpenSpecificDeepLink = this.onOpenSpecificDeepLink.bind(this);
+        this.onSaveInIndexDb = this.onSaveInIndexDb.bind(this);
 
         this.state = {
             teamContext: null,
@@ -28,6 +33,27 @@ class Introduction extends React.Component<{}, IAppState> {
         microsoftTeams.getContext(context => {
             this.setState({ teamContext: context});
         });
+
+        var navBarMenu: microsoftTeams.menus.MenuItem[] = [{
+            id: "filter",
+            title: "Filter",
+            enabled: true,
+            viewData: null as any,
+            icon: "PHN2ZyB4bWxuczp4bGluaz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSczMnB4JyBoZWlnaHQ9JzMycHgnIHZpZXdCb3g9JzAgMCAyOCAyOCcgdmVyc2lvbj0nMS4xJz48ZyBpZD0nUHJvZHVjdC1JY29ucycgc3Ryb2tlPSdub25lJyBzdHJva2Utd2lkdGg9JzEnIGZpbGw9J25vbmUnIGZpbGwtcnVsZT0nZXZlbm9kZCc+PGcgaWQ9J2ljX2ZsdWVudF9maWx0ZXJfMjhfcmVndWxhcicgZmlsbD0nIzIxMjEyMScgZmlsbC1ydWxlPSdub256ZXJvJz48cGF0aCBkPSdNMTcuMjUsMTkgQzE3LjY2NDIxMzYsMTkgMTgsMTkuMzM1Nzg2NCAxOCwxOS43NSBDMTgsMjAuMTY0MjEzNiAxNy42NjQyMTM2LDIwLjUgMTcuMjUsMjAuNSBMMTAuNzUsMjAuNSBDMTAuMzM1Nzg2NCwyMC41IDEwLDIwLjE2NDIxMzYgMTAsMTkuNzUgQzEwLDE5LjMzNTc4NjQgMTAuMzM1Nzg2NCwxOSAxMC43NSwxOSBMMTcuMjUsMTkgWiBNMjEuMjUsMTMgQzIxLjY2NDIxMzYsMTMgMjIsMTMuMzM1Nzg2NCAyMiwxMy43NSBDMjIsMTQuMTY0MjEzNiAyMS42NjQyMTM2LDE0LjUgMjEuMjUsMTQuNSBMNi43NSwxNC41IEM2LjMzNTc4NjQ0LDE0LjUgNiwxNC4xNjQyMTM2IDYsMTMuNzUgQzYsMTMuMzM1Nzg2NCA2LjMzNTc4NjQ0LDEzIDYuNzUsMTMgTDIxLjI1LDEzIFogTTI0LjI1LDcgQzI0LjY2NDIxMzYsNyAyNSw3LjMzNTc4NjQ0IDI1LDcuNzUgQzI1LDguMTY0MjEzNTYgMjQuNjY0MjEzNiw4LjUgMjQuMjUsOC41IEwzLjc1LDguNSBDMy4zMzU3ODY0NCw4LjUgMyw4LjE2NDIxMzU2IDMsNy43NSBDMyw3LjMzNTc4NjQ0IDMuMzM1Nzg2NDQsNyAzLjc1LDcgTDI0LjI1LDcgWicgaWQ9J0NvbG9yJy8+PC9nPjwvZz48L3N2Zz4="
+        },
+        {
+            id: "newApproval",
+            title: "New approval request",
+            enabled: true,
+            viewData: null as any,
+            icon: "PHN2ZyB4bWxuczp4bGluaz0naHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluaycgd2lkdGg9JzMycHgnIGhlaWdodD0nMzJweCcgdmlld0JveD0nMCAwIDI4IDI4Jz48ZyBpZD0nUHJvZHVjdC1JY29ucycgc3Ryb2tlPSdub25lJyBzdHJva2Utd2lkdGg9JzEnIGZpbGw9J25vbmUnIGZpbGwtcnVsZT0nZXZlbm9kZCc+PGcgaWQ9J2ljX2ZsdWVudF9hZGRfMjhfcmVndWxhcicgZmlsbD0nIzIxMjEyMScgZmlsbC1ydWxlPSdub256ZXJvJz48cGF0aCBkPSdNMTQuNSwxMyBMMTQuNSwzLjc1Mzc4NTc3IEMxNC41LDMuMzM5Nzg1NzcgMTQuMTY0LDMuMDAzNzg1NzcgMTMuNzUsMy4wMDM3ODU3NyBDMTMuMzM2LDMuMDAzNzg1NzcgMTMsMy4zMzk3ODU3NyAxMywzLjc1Mzc4NTc3IEwxMywxMyBMMy43NTM4NzU3MywxMyBDMy4zMzk4NzU3MywxMyAzLjAwMzg3NTczLDEzLjMzNiAzLjAwMzg3NTczLDEzLjc1IEMzLjAwMzg3NTczLDE0LjE2NCAzLjMzOTg3NTczLDE0LjUgMy43NTM4NzU3MywxNC41IEwxMywxNC41IEwxMywyMy43NTIzNjUxIEMxMywyNC4xNjYzNjUxIDEzLjMzNiwyNC41MDIzNjUxIDEzLjc1LDI0LjUwMjM2NTEgQzE0LjE2NCwyNC41MDIzNjUxIDE0LjUsMjQuMTY2MzY1MSAxNC41LDIzLjc1MjM2NTEgTDE0LjUsMTQuNSBMMjMuNzQ5ODI2MiwxNC41MDMwNzU0IEMyNC4xNjM4MjYyLDE0LjUwMzA3NTQgMjQuNDk5ODI2MiwxNC4xNjcwNzU0IDI0LjQ5OTgyNjIsMTMuNzUzMDc1NCBDMjQuNDk5ODI2MiwxMy4zMzkwNzU0IDI0LjE2MzgyNjIsMTMuMDAzMDc1NCAyMy43NDk4MjYyLDEzLjAwMzA3NTQgTDE0LjUsMTMgWicgaWQ9J0NvbG9yJy8+PC9nPjwvZz48L3N2Zz4="
+        }
+        ];
+        microsoftTeams.menus.setNavBarMenu(navBarMenu, (s: string) => {
+            console.log('received click of: ' + s);
+            return true;
+        });
+
 
         window.addEventListener('message', (event) => {console.log(event.data)});
     }
@@ -102,12 +128,6 @@ class Introduction extends React.Component<{}, IAppState> {
     }
 
     async onPWAFeatureCheck() {
-//        var myrecordMap = new Map<string, any>();
-//        myrecordMap.set('1', {name: 'john'});
-//        myrecordMap.set('2', {email: 'john@smith.com'});
-//        var db = new TestIndexedDb('myJunkDB');
-//        await db.SaveMap('myJunkTable', myrecordMap);
-
         //check PWA support
         if(navigator.serviceWorker) {
             navigator.serviceWorker.ready.then(reg => {
@@ -156,6 +176,21 @@ class Introduction extends React.Component<{}, IAppState> {
         microsoftTeams.executeDeepLink(str);
     }
 
+    async onSaveInIndexDb() {
+        let saved = await this.testIndexDb.putValue("myjunktable", {
+            name: 'test',
+            email: 'test@email.com',
+            phone: '98082316521',
+            birthday: '01/02/1978'
+        });
+
+        alert('Saved: ' + JSON.stringify(saved));
+    } 
+
+    openChildWindow() {
+        window.open(document.location.href)
+    }
+
     render() {
         return (
             <div>
@@ -189,6 +224,12 @@ class Introduction extends React.Component<{}, IAppState> {
                 </div>
                 <div>
                     <a href="msteams://teams.microsoft.com/l/call/0/0?users=devansh@myappshop.onmicrosoft.com" className="button">TeamsCall</a>
+                </div>
+                <div>
+                    <input type="button" onClick= { this.onSaveInIndexDb } value="Save Data in IndexDb" />
+                </div>
+                <div>
+                    <input type="button" onClick= { this.openChildWindow } value="Open Child Window" />
                 </div>
                 <div>
                     <input type="button" onClick= { this.onOpenTeams } value="Open MSTeams Button" />

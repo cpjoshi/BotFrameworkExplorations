@@ -87,6 +87,7 @@ export class kycform extends React.Component<{}, IAppState> {
         var that = this;
         microsoftTeams.media.captureImage((sdkerr, files) => {
             if (!sdkerr) {
+                console.log('image received at:' + Date.now());
                 var src = "data:image/png;base64," + files[0].content;
                 that.setState({ imgSrc: src });
             }
