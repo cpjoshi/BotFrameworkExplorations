@@ -13,6 +13,7 @@ export class MessageForm extends React.Component<{}, IAppState> {
         this.onClickSeverity1 = this.onClickSeverity1.bind(this);
         this.onClickSeverity2 = this.onClickSeverity2.bind(this);
         this.onClickSeverity3 = this.onClickSeverity3.bind(this);
+        this.onClickTestAuthApi = this.onClickTestAuthApi.bind(this);
         microsoftTeams.initialize();
 
         this.state = {
@@ -44,14 +45,15 @@ export class MessageForm extends React.Component<{}, IAppState> {
         };
         microsoftTeams.tasks.submitTask(alertmsg, getAppId());
     }
+
     onClickTestAuthApi() {
         microsoftTeams.authentication.authenticate({
             url: "https://botexplorations.azurefd.net/message?host=msteams",
             width: 800,
             height: 600,
             failureCallback: console.error,
-            successCallback: function(authSuccessUrl) {
-            document.location = authSuccessUrl;
+            successCallback: function(authSuccessUrl?: string) {
+                document.location.href = authSuccessUrl ?? "";
             }
         });
     }
@@ -69,7 +71,7 @@ export class MessageForm extends React.Component<{}, IAppState> {
                 <div>
                     <Button content="Severity-3" onClick={this.onClickSeverity3} primary />
                 </div>
-		 <div>
+                <div>
                     <Button content="Test Auth API" onClick={this.onClickTestAuthApi} primary />
                 </div>
             </div>
