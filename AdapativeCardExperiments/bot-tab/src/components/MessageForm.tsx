@@ -44,6 +44,17 @@ export class MessageForm extends React.Component<{}, IAppState> {
         };
         microsoftTeams.tasks.submitTask(alertmsg, getAppId());
     }
+    onClickTestAuthApi() {
+        microsoftTeams.authentication.authenticate({
+            url: "https://botexplorations.azurefd.net/message?host=msteams",
+            width: 800,
+            height: 600,
+            failureCallback: console.error,
+            successCallback: function(authSuccessUrl) {
+            document.location = authSuccessUrl;
+            }
+        });
+    }
 
     render() {
         return (
@@ -57,6 +68,9 @@ export class MessageForm extends React.Component<{}, IAppState> {
                 </div>
                 <div>
                     <Button content="Severity-3" onClick={this.onClickSeverity3} primary />
+                </div>
+		 <div>
+                    <Button content="Test Auth API" onClick={this.onClickTestAuthApi} primary />
                 </div>
             </div>
         );
