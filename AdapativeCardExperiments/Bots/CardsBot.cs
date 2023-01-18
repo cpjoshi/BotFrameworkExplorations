@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using AdaptiveCards;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Dialogs;
@@ -113,6 +114,16 @@ namespace AdapativeCardExperiments.Bots
                             }
                         };
                         await turnContext.SendActivityAsync(MessageFactory.Attachment(c.ToAttachment()));
+                        return;
+                    }
+
+                case "mn":
+                    {
+                        var url = HttpUtility.UrlEncode("https://botexplorations.azurefd.net/kycform");
+                        var msg = MessageFactory.Text("This message will contain a popup notification");
+                        var externalResourceUrl = $"https://teams.microsoft.com/l/bubble/14a6686e-e903-4e55-b945-dc2472381849?url={url}&height=300&width=500&title=Payment&completionBotId=14a6686e-e903-4e55-b945-dc2472381849";
+                        msg.TeamsNotifyUser(true, externalResourceUrl);
+                        await turnContext.SendActivityAsync(msg, cancellationToken);
                         return;
                     }
 

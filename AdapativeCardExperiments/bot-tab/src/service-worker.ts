@@ -84,14 +84,15 @@ self.addEventListener('install', (event) => {
 });
 
 
-self.onsync = function(event) {
-  var syncevent = JSON.parse(event.tag);
-  if(syncevent.tag == "kyc-sync") {
-    event.waitUntil(syncIt());
-  } else {
-    console.log("this sync is not supported: " + event);
-  }
-}
+// self.onsync = function(event) {
+//   var syncevent = JSON.parse(event.tag);
+//   if(syncevent.tag == "kyc-sync") {
+//     event.waitUntil(syncIt());
+//   } else {
+//     console.log("this sync is not supported: " + event);
+//   }
+// }
+
 
 self.onmessage = function(event: any) 
 {

@@ -71,7 +71,7 @@ namespace RockPaperScissorGameBot.Cards
                             }
                         }
             };
-
+            
             return card.ToAttachment();
         }
 

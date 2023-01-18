@@ -24,66 +24,29 @@
     },
     "accentColor": "#FFFFFF",
     "bots": [
-        {
-            "botId": "6d3aaddc-4fc9-45fc-b5ab-05b62f60a530",
+      {
+        "botId": "6d3aaddc-4fc9-45fc-b5ab-05b62f60a530",
+        "scopes": [
+          "team",
+          "groupchat"
+        ],
+        "commandLists": [
+          {
             "scopes": [
-                "team",
-                "groupchat"
+              "team",
+              "groupchat"
             ],
-            "commandLists": [
-                {
-                    "scopes": [
-                        "team"
-                    ],
-                    "commands": [
-                        {
-                            "title": "start",
-                            "description": "start the game in this Team"
-                        }
-                    ]
-                },
-                {
-                    "scopes": [
-                        "groupchat"
-                    ],
-                    "commands": [
-                        {
-                            "title": "start",
-                            "description": "start the game in this groupchat"
-                        }
-                    ]
-                }
-            ],
-            "supportsFiles": true,
-            "isNotificationOnly": true
-        }
-    ],
-    "composeExtensions": [
-        {
-            "botId": "6d3aaddc-4fc9-45fc-b5ab-05b62f60a530",
-            "canUpdateConfiguration": true,
             "commands": [
-                {
-                    "id": "start",
-                    "type": "action",
-                    "title": "Start Game",
-                    "description": "",
-                    "initialRun": false,
-                    "fetchTask": false,
-                  "context": [
-                    "message"
-                  ],
-                    "parameters": [
-                        {
-                            "name": "Name",
-                            "title": "RockPaperScissor ",
-                            "description": "",
-                            "inputType": "text"
-                        }
-                    ]
-                }
+              {
+                "title": "Start",
+                "description": "start the game in this Team"
+              }
             ]
-        }
+          }
+        ],
+        "supportsFiles": true,
+        "isNotificationOnly": true
+      }
     ],
     "permissions": [
         "identity",

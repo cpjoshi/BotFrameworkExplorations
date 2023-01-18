@@ -4,6 +4,8 @@ using Microsoft.Bot.Schema;
 using System.Threading;
 using System.Threading.Tasks;
 using RockPaperScissorGameBot.Services;
+using Microsoft.Bot.Schema.Teams;
+using Microsoft.Bot.Connector.Authentication;
 
 namespace RockPaperScissorGameBot.Bots
 {
@@ -27,9 +29,15 @@ namespace RockPaperScissorGameBot.Bots
             //User wants to start a new game
             switch (commandName)
             {
-                case "StartGame":
+                case "Start":
                     {
                         await _gameStarter.StartNewGame(turnContext, cancellationToken).ConfigureAwait(false);
+                        return;
+                    }
+
+                case "SendScore":
+                    {
+                        await _gameStarter.StartNewThread(turnContext, cancellationToken).ConfigureAwait(false);
                         return;
                     }
             }
@@ -53,5 +61,60 @@ namespace RockPaperScissorGameBot.Bots
             str = str?.ToUpperInvariant();
             return (str == "ROCK" || str == "PAPER" || str == "SCISSOR");
         }
+
+        protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionFetchTaskAsync(
+            ITurnContext<IInvokeActivity> turnContext, 
+            MessagingExtensionAction action, 
+            CancellationToken cancellationToken)
+        {
+            
+            var type = turnContext.Activity.Conversation.ConversationType;
+            System.Diagnostics.Debug.WriteLine(type);
+
+            var gameCard = new HeroCard(title: "MyGame").ToAttachment();
+
+            return new MessagingExtensionActionResponse
+            {
+                Task = this.TaskModuleReportCardTask(turnContext, gameCard),
+            };
+        }
+
+        /// <summary>
+        /// Called asynchronous when request is a messaging extension action for submit action.
+        /// </summary>
+        /// <param name="turnContext">The turn context.</param>
+        /// <param name="action">action</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        protected override async Task<MessagingExtensionActionResponse> OnTeamsMessagingExtensionSubmitActionAsync(
+            ITurnContext<IInvokeActivity> turnContext, 
+            MessagingExtensionAction action, 
+            CancellationToken cancellationToken)
+        {
+            var type = turnContext.Activity.Conversation.ConversationType;
+            System.Diagnostics.Debug.WriteLine(type);
+
+            var gameCard = new HeroCard(title: "MyGame").ToAttachment();
+
+            return new MessagingExtensionActionResponse
+            {
+                Task = this.TaskModuleReportCardTask(turnContext, gameCard),
+            };
+        }
+
+        private TaskModuleResponseBase TaskModuleReportCardTask(ITurnContext<IInvokeActivity> turnContext, Attachment card)
+        {
+
+            return new TaskModuleContinueResponse()
+            {
+                Type = "continue",
+                Value = new TaskModuleTaskInfo()
+                {
+                    Title = "Starting the game",
+                    Card = card,
+                },
+            };
+        }
+
+
     }
 }

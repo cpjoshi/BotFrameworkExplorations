@@ -4,7 +4,6 @@
   "private": true,
   "dependencies": {
     "@fluentui/react-northstar": "^0.51.6",
-    "@microsoft/teams-js": "^1.8.0",
     "@testing-library/jest-dom": "^5.11.4",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
@@ -13,6 +12,7 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "@types/react-router-dom": "^5.1.7",
+    "@microsoft/teams-js": "^2.7.0",
     "file-saver": "^2.0.5",
     "idb": "^6.0.0",
     "react": "^17.0.1",

@@ -42,15 +42,59 @@ namespace SuggestedActionsToCardActions.Bots
                         return;
                     }
 
-                case "Help":
+                case "cards":
                     {
-                        reply = MessageFactory.Text("Did the resolution work for you?");
+                        var card = new HeroCard()
+                        {
+                            Buttons = new CardAction[]
+                            {
+                                new CardAction()
+                                {
+                                    Type = ActionTypes.OpenUrl,
+                                    Value = "https://docs.microsoft.com/en-us/microsoftteams/platform/tabs/how-to/add-tab",
+                                    Title = "Open Url"
+                                }
+                            }
+                        };
+                        await turnContext.SendActivityAsync(MessageFactory.Attachment(card.ToAttachment()), cancellationToken);
+                        return;
+                    }
+
+                case "cardactions":
+                    {
                         reply.SuggestedActions = new SuggestedActions()
                         {
                             Actions = new List<CardAction>()
                             {
-                                new CardAction() {Title = "Yes", Type=ActionTypes.ImBack, Value="Yes"},
-                                new CardAction() {Title = "No", Type=ActionTypes.ImBack, Value="No"}
+                                new CardAction()
+                                {
+                                    Title = "Open Url",
+                                    Type = ActionTypes.OpenUrl,
+                                    Value = "https://docs.microsoft.com/en-us/microsoftteams/platform/tabs/how-to/add-tab"
+                                },
+
+                                new CardAction() { Title = "ImBack", Type = ActionTypes.ImBack, Value = "ImBack" },
+                                new CardAction
+                                {
+                                    Title = "MessageBack",
+                                    Type = ActionTypes.MessageBack,
+                                    DisplayText = "MessageBack",
+                                    Text = "MessageBack",
+                                    Value = new JObject { { "Type", "MessageBack" } }
+                                },
+                                new CardAction()
+                                {
+                                    Title = "invoke",
+                                    Type = "invoke",
+                                    Value = "{\"option\": \"invokeSomething\"}"
+                                },
+                                new CardAction()
+                                {
+                                    Title = "signin",
+                                    Type = ActionTypes.Signin,
+                                    Value = "https://oauthsignin.microsoft.com/callbackurl"
+                                }
+
                             }
                         };
                     }

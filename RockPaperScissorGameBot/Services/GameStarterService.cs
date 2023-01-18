@@ -61,6 +61,34 @@ namespace RockPaperScissorGameBot.Services
 
         }
 
+        public async Task StartNewThread(ITurnContext<IMessageActivity> turnContext, CancellationToken cancellationToken)
+        {
+            var teamsChannelId = turnContext.Activity.TeamsGetChannelId();
+            var serviceUrl = turnContext.Activity.ServiceUrl;
+            var credentials = new MicrosoftAppCredentials(_appId, _appPassword);
+            string activityId = string.Empty;
+
+            var channelData = turnContext.Activity.GetChannelData<TeamsChannelData>();
+            var message = Activity.CreateMessageActivity();
+            message.Text = "Hello Bhai!!";
+
+            var conversationParameters = new ConversationParameters
+            {
+                IsGroup = true,
+                ChannelData = new TeamsChannelData
+                {
+                    Channel = new ChannelInfo(channelData.Channel.Id),
+                },
+                Activity = (Activity)message
+            };
+
+            await ((BotFrameworkAdapter)turnContext.Adapter)
+                .CreateConversationAsync(teamsChannelId, serviceUrl, credentials, conversationParameters, null, cancellationToken)
+                .ConfigureAwait(false);
+
+        }
+
+
         private async Task MessageMembersAsync(ITurnContext turnContext, 
             Player player,
             TeamsChannelAccount teamMember,

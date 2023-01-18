@@ -29,5 +29,10 @@ namespace RockPaperScissorGameBot.Models
             return _games[gameId];
         }
 
+        public IEnumerable<Game> GetAllGames()
+        {
+            foreach (var game in _games.Values)
+                yield return game;
+        }
     }
 }

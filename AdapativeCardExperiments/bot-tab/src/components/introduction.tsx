@@ -11,6 +11,14 @@ export interface IAppState {
     pwaFeature: string;
 }
 
+export interface TeamsNativeClient {
+    framelessPostMessage(msg: string): void;
+}
+  
+export interface ExtendedWindow extends Window {
+    nativeInterface: TeamsNativeClient;
+}
+
 class Introduction extends React.Component<{}, IAppState> {
     testIndexDb: TestIndexedDb;
 
@@ -23,8 +31,11 @@ class Introduction extends React.Component<{}, IAppState> {
         this.openDeepLink = this.openDeepLink.bind(this);
         this.infiteLoop = this.infiteLoop.bind(this);
         this.onOpenSpecificDeepLink = this.onOpenSpecificDeepLink.bind(this);
+        this.onOpenPowerAppsDeepLink = this.onOpenPowerAppsDeepLink.bind(this);
         this.onSaveInIndexDb = this.onSaveInIndexDb.bind(this);
-
+        this.onAccessJsBridge = this.onAccessJsBridge.bind(this);
+        this.onGetContext = this.onGetContext.bind(this);
+ 
         this.state = {
             teamContext: null,
             pwaFeature: ""
@@ -39,6 +50,7 @@ class Introduction extends React.Component<{}, IAppState> {
             title: "Filter",
             enabled: true,
             viewData: null as any,
+            selected: false,
             icon: "PHN2ZyB4bWxuczp4bGluaz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPSczMnB4JyBoZWlnaHQ9JzMycHgnIHZpZXdCb3g9JzAgMCAyOCAyOCcgdmVyc2lvbj0nMS4xJz48ZyBpZD0nUHJvZHVjdC1JY29ucycgc3Ryb2tlPSdub25lJyBzdHJva2Utd2lkdGg9JzEnIGZpbGw9J25vbmUnIGZpbGwtcnVsZT0nZXZlbm9kZCc+PGcgaWQ9J2ljX2ZsdWVudF9maWx0ZXJfMjhfcmVndWxhcicgZmlsbD0nIzIxMjEyMScgZmlsbC1ydWxlPSdub256ZXJvJz48cGF0aCBkPSdNMTcuMjUsMTkgQzE3LjY2NDIxMzYsMTkgMTgsMTkuMzM1Nzg2NCAxOCwxOS43NSBDMTgsMjAuMTY0MjEzNiAxNy42NjQyMTM2LDIwLjUgMTcuMjUsMjAuNSBMMTAuNzUsMjAuNSBDMTAuMzM1Nzg2NCwyMC41IDEwLDIwLjE2NDIxMzYgMTAsMTkuNzUgQzEwLDE5LjMzNTc4NjQgMTAuMzM1Nzg2NCwxOSAxMC43NSwxOSBMMTcuMjUsMTkgWiBNMjEuMjUsMTMgQzIxLjY2NDIxMzYsMTMgMjIsMTMuMzM1Nzg2NCAyMiwxMy43NSBDMjIsMTQuMTY0MjEzNiAyMS42NjQyMTM2LDE0LjUgMjEuMjUsMTQuNSBMNi43NSwxNC41IEM2LjMzNTc4NjQ0LDE0LjUgNiwxNC4xNjQyMTM2IDYsMTMuNzUgQzYsMTMuMzM1Nzg2NCA2LjMzNTc4NjQ0LDEzIDYuNzUsMTMgTDIxLjI1LDEzIFogTTI0LjI1LDcgQzI0LjY2NDIxMzYsNyAyNSw3LjMzNTc4NjQ0IDI1LDcuNzUgQzI1LDguMTY0MjEzNTYgMjQuNjY0MjEzNiw4LjUgMjQuMjUsOC41IEwzLjc1LDguNSBDMy4zMzU3ODY0NCw4LjUgMyw4LjE2NDIxMzU2IDMsNy43NSBDMyw3LjMzNTc4NjQ0IDMuMzM1Nzg2NDQsNyAzLjc1LDcgTDI0LjI1LDcgWicgaWQ9J0NvbG9yJy8+PC9nPjwvZz48L3N2Zz4="
         },
         {
@@ -46,6 +58,7 @@ class Introduction extends React.Component<{}, IAppState> {
             title: "New approval request",
             enabled: true,
             viewData: null as any,
+            selected: false,
             icon: "PHN2ZyB4bWxuczp4bGluaz0naHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluaycgd2lkdGg9JzMycHgnIGhlaWdodD0nMzJweCcgdmlld0JveD0nMCAwIDI4IDI4Jz48ZyBpZD0nUHJvZHVjdC1JY29ucycgc3Ryb2tlPSdub25lJyBzdHJva2Utd2lkdGg9JzEnIGZpbGw9J25vbmUnIGZpbGwtcnVsZT0nZXZlbm9kZCc+PGcgaWQ9J2ljX2ZsdWVudF9hZGRfMjhfcmVndWxhcicgZmlsbD0nIzIxMjEyMScgZmlsbC1ydWxlPSdub256ZXJvJz48cGF0aCBkPSdNMTQuNSwxMyBMMTQuNSwzLjc1Mzc4NTc3IEMxNC41LDMuMzM5Nzg1NzcgMTQuMTY0LDMuMDAzNzg1NzcgMTMuNzUsMy4wMDM3ODU3NyBDMTMuMzM2LDMuMDAzNzg1NzcgMTMsMy4zMzk3ODU3NyAxMywzLjc1Mzc4NTc3IEwxMywxMyBMMy43NTM4NzU3MywxMyBDMy4zMzk4NzU3MywxMyAzLjAwMzg3NTczLDEzLjMzNiAzLjAwMzg3NTczLDEzLjc1IEMzLjAwMzg3NTczLDE0LjE2NCAzLjMzOTg3NTczLDE0LjUgMy43NTM4NzU3MywxNC41IEwxMywxNC41IEwxMywyMy43NTIzNjUxIEMxMywyNC4xNjYzNjUxIDEzLjMzNiwyNC41MDIzNjUxIDEzLjc1LDI0LjUwMjM2NTEgQzE0LjE2NCwyNC41MDIzNjUxIDE0LjUsMjQuMTY2MzY1MSAxNC41LDIzLjc1MjM2NTEgTDE0LjUsMTQuNSBMMjMuNzQ5ODI2MiwxNC41MDMwNzU0IEMyNC4xNjM4MjYyLDE0LjUwMzA3NTQgMjQuNDk5ODI2MiwxNC4xNjcwNzU0IDI0LjQ5OTgyNjIsMTMuNzUzMDc1NCBDMjQuNDk5ODI2MiwxMy4zMzkwNzU0IDI0LjE2MzgyNjIsMTMuMDAzMDc1NCAyMy43NDk4MjYyLDEzLjAwMzA3NTQgTDE0LjUsMTMgWicgaWQ9J0NvbG9yJy8+PC9nPjwvZz48L3N2Zz4="
         }
         ];
@@ -111,9 +124,39 @@ class Introduction extends React.Component<{}, IAppState> {
         window.location.href = "msteams://teams.microsoft.com/l/channel/19%3a0d56e54bf27c4a23888c2c16c5ace5d7%40thread.skype/Mobile%2520Extensibility?groupId=32e3b156-66b2-4135-9aeb-73295a35a55b&tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47";
     }
 
+    onOpenPowerAppsDeepLink() {
+        window.location.href = "ms-apps:///providers/Microsoft.PowerApps/apps/ca7d8785-ed89-4e81-9112-667c490db234?tenantId=72f988bf-86f1-41af-91ab-2d7cd011db47";
+    }
+    
+
     onDownloadBlob() {
         var blob = new Blob(["Hello world using anchor click!"], { type: "text/plain;charset=utf-8" });
         FileSaver.saveAs(blob, "hello_world.txt");
+    }
+
+    onAccessJsBridge() {
+        var request =   {
+            id: 4,
+            func: "getContext",
+            timestamp: Date.now(),
+            args: [],
+          };
+        
+        //Teams-Android: Access 'nativeInterface' (JS-Bridge object) directly from within an iframe. 
+        var thisWindow = window as Window;
+        (thisWindow as ExtendedWindow).nativeInterface.framelessPostMessage(JSON.stringify(request));
+
+        //Teams-iOS: Access 'listener' (JS-Bridge object) object directly from within an iframe. 
+        (window as any).webkit.messageHandlers.listener.postMessage(request);
+    }
+
+    onGetContext() {
+        microsoftTeams.initialize(() => {
+            console.log("initialization successful!");
+            microsoftTeams.getContext(context => {
+                this.setState({ teamContext: context});
+            });    
+        });
     }
 
     onDownload() {
@@ -199,7 +242,17 @@ class Introduction extends React.Component<{}, IAppState> {
                     Your userAgent is: {navigator.userAgent}
                 </div>
                 <div>
-                    <Button content="Launch Task Module" onClick={this.onShowTaskModule} primary />
+                    <Button content="GetContext-V2.7.0" onClick={this.onGetContext} primary />
+                </div>
+                <div>
+                    <TextArea id="ctxOutput" rows={10} cols={50} value={Math.random() + ": " + JSON.stringify(this.state.teamContext)}></TextArea>
+                </div>
+                <div>
+                    <Button content="JsBridgeAccess" onClick={this.onAccessJsBridge} primary />
+                </div>
+                <iframe src="https://botexplorations.azurefd.net/intro?host=msteams" title="iFrame"></iframe>
+                <div>
+                    <Button content="NetFlix" onClick={this.onShowTaskModule} primary />
                 </div>
                 <div>
                     <Button content="Do infinite loop" onClick={this.infiteLoop} primary />
@@ -208,7 +261,7 @@ class Introduction extends React.Component<{}, IAppState> {
                     <a href="/sample.pdf" download>Click This to Download</a>
                 </div>
                 <div>
-                    <a href="/sso?host=msteams">Visit sso page!</a>
+                    <a href="/sso?host=msteams" target="_self">Visit sso page!</a>
                 </div>
                 <div>
                     <input type="text" id="deeplink"/>
@@ -218,6 +271,9 @@ class Introduction extends React.Component<{}, IAppState> {
                 </div>
                 <div>
                     <input type="button" onClick={this.onOpenSpecificDeepLink} value="Open My Channel via Deeplink"/>
+                </div>
+                <div>
+                    <input type="button" onClick={this.onOpenPowerAppsDeepLink} value="Open PowerApps via Deeplink"/>
                 </div>
                 <div>
                     <a href="mailto:someone@yoursite.com?subject=Mail from Our Site">Email Us</a>
@@ -249,7 +305,23 @@ class Introduction extends React.Component<{}, IAppState> {
                 <div>
                     <Button content="Ping Service Worker" onClick={this.onSWPing} primary />
                 </div>
- 
+                <div>
+                    Below is YouTube:
+                    <iframe width="350" height="345" title='Rhapsody iFrame' src="https://www.youtube.com/embed/tgbNymZ7vqY"> </iframe>
+                </div>
+                <div>
+                    Below is an audio snippet:
+                    <audio src="https://botexplorations.azurefd.net/Recording1.m4a" controls>
+                        <code> Your browser doesn't support audio tags</code>
+                    </audio>
+                </div>
+                <div>
+                    Below is an Video snippet:
+                    <video src="https://botexplorations.azurefd.net/count.mp4" width="350" height="345" controls>
+                        <code> Your browser doesn't support Video tags</code>
+                    </video>
+                </div>
+
             </div>
             );
     }

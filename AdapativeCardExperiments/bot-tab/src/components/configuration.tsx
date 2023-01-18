@@ -18,7 +18,7 @@ class configuration extends React.Component {
         microsoftTeams.settings.registerOnSaveHandler(function (saveEvent) {
             microsoftTeams.settings.setSettings({
                 entityId: "myconfigTab",
-                contentUrl: `${getBaseUrl()}/intro?host=msteams&from=config`,
+                contentUrl: `${getBaseUrl()}/apps?host=msteams&from=config`,
                 suggestedDisplayName: tab,
                 websiteUrl: "https://botexplorations.azurefd.net"
             });

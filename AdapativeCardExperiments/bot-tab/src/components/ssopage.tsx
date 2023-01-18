@@ -24,7 +24,6 @@ export default class SSOPage extends React.Component<{}, AuthResult> {
         let that = this;
 
         const authTokenRequest = {
-            resources: ["api://botexplorations.azurefd.net/14a6686e-e903-4e55-b945-dc2472381849"],
             successCallback: function (token: string) { that.setState({ result: token, authdone: true }); },
             failureCallback: function (error: string) { that.setState({ result: error, authdone: false }); },
         };
