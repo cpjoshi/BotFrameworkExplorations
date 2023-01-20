@@ -21,10 +21,14 @@ export interface ExtendedWindow extends Window {
 
 class Introduction extends React.Component<{}, IAppState> {
     testIndexDb: TestIndexedDb;
+    validOrigins: string[] = ["botexplorations.azurewebsites.net", "botexplorations.azurefd.net"];
 
     constructor(props: {}) {
         super(props);
-        microsoftTeams.initialize();
+        microsoftTeams.initialize(() => {
+            console.log("Teams SDK initialized");
+        }, this.validOrigins);
+
         this.testIndexDb = new TestIndexedDb("myjunkdb");
         this.onShowTaskModule = this.onShowTaskModule.bind(this);
         this.onPWAFeatureCheck = this.onPWAFeatureCheck.bind(this);
@@ -156,7 +160,7 @@ class Introduction extends React.Component<{}, IAppState> {
             microsoftTeams.getContext(context => {
                 this.setState({ teamContext: context});
             });    
-        });
+        }, this.validOrigins);
     }
 
     onDownload() {
