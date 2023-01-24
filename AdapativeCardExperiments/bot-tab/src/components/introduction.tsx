@@ -21,7 +21,7 @@ export interface ExtendedWindow extends Window {
 
 class Introduction extends React.Component<{}, IAppState> {
     testIndexDb: TestIndexedDb;
-    validOrigins: string[] = ["botexplorations.azurewebsites.net", "botexplorations.azurefd.net"];
+    validOrigins: string[] = ["https://botexplorations.azurewebsites.net", "https://botexplorations.azurefd.net"];
 
     constructor(props: {}) {
         super(props);
@@ -254,7 +254,7 @@ class Introduction extends React.Component<{}, IAppState> {
                 <div>
                     <Button content="JsBridgeAccess" onClick={this.onAccessJsBridge} primary />
                 </div>
-                <iframe src="https://botexplorations.azurefd.net/intro?host=msteams" title="iFrame"></iframe>
+                <iframe src="https://botexplorations.azurewebsites.net/intro?host=msteams" title="iFrame"></iframe>
                 <div>
                     <Button content="NetFlix" onClick={this.onShowTaskModule} primary />
                 </div>
