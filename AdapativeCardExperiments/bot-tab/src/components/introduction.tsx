@@ -154,7 +154,10 @@ class Introduction extends React.Component<{}, IAppState> {
         (window as any).webkit.messageHandlers.listener.postMessage(request);
     }
 
-    onGetContext() {
+    async onGetContext() {
+        var cntxt = await microsoftTeams.app.getContext();
+        console.log("async context call success: " + JSON.stringify(cntxt));
+
         microsoftTeams.initialize(() => {
             console.log("initialization successful!");
             microsoftTeams.getContext(context => {
