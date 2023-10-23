@@ -29,7 +29,7 @@ export class kycform extends React.Component<{}, IAppState> {
         this.state = {
             teamContext: null,
             imgSrc: '/take-a-photo.png',
-            name: 'CPJoshi',
+            name: 'CPJoshi1',
             email: 'cpj@mymail.com',
             phone: '726317863',
             birthday: new Date("2011-01-16"),
@@ -58,25 +58,45 @@ export class kycform extends React.Component<{}, IAppState> {
 
     takePhoto() {
         var that = this;
-        microsoftTeams.media.captureImage((sdkerr, files) => {
-            if (!sdkerr && files !== undefined) {
+
+        let imageProp: microsoftTeams.media.ImageProps = {
+            sources: [microsoftTeams.media.Source.Camera, microsoftTeams.media.Source.Gallery],
+            startMode: microsoftTeams.media.CameraStartMode.Photo,
+            ink: false,
+            cameraSwitcher: false,
+            textSticker: false,
+            enableFilter: true,
+        };
+         
+        let mediaInput: microsoftTeams.media.MediaInputs = {
+            mediaType: microsoftTeams.media.MediaType.Image,
+            maxMediaCount: 1,
+            imageProps: imageProp
+        };
+
+
+        microsoftTeams.media.selectMedia(mediaInput, (error: microsoftTeams.SdkError, attachments: microsoftTeams.media.Media[]) => {
+            // If there's any error, an alert shows the error message/code
+            if (error) {
+              if (error.message) {
+                alert(" ErrorCode: " + error.errorCode + error.message);
+              } else {
+                alert(" ErrorCode: " + error.errorCode);
+              }
+            } else if (attachments) {
                 console.log('image received at:' + Date.now());
-                var src = "data:image/png;base64," + files[0].content;
+                var imgItem = attachments[0];
+                var src = "data:" + imgItem.mimeType + ";base64," + imgItem.preview;
                 that.setState({ imgSrc: src });
-            } else {
-                if(files === undefined) {
-                    console.log("filed object is undefined");
-                }
-                console.log("error while taking photo: " + JSON.stringify(sdkerr));
             }
-        })
+          });
     }
 
     async saveLocal(e: any) {
-        var quota = await navigator.storage.estimate();
-        var totalSpace = quota.quota;
-        var usedSpace = quota.usage;
-        console.log("TotalSpace: " + totalSpace + " UsedSapce:" + usedSpace);
+        //var quota = await navigator.storage.estimate();
+        //var totalSpace = quota.quota;
+        //var usedSpace = quota.usage;
+        //console.log("TotalSpace: " + totalSpace + " UsedSapce:" + usedSpace);
         
         await this.kycRecordsRepository.enqueueForSync({
             name: this.state.name,
